@@ -66,8 +66,8 @@ export default function About() {
             關於本站
           </Typography>
           <Typography variant="body2" component="p">
-            網頁程式設計助教系統，作為課程作業demo輔助，使用<code>React</code>和
-            <code>Material UI</code>開發。
+            網頁程式設計助教系統，作為課程作業demo輔助，使用 <code>React</code>{" "}
+            和 <code>Material UI</code> 開發。
           </Typography>
           <ImageList className={classes.imgList} rowHeight={40} cols={4}>
             {imgList.map((img) => (
