@@ -81,7 +81,7 @@ export default function About() {
         </CardContent>
         <CardActions>
           <Button
-            href="https://github.com/stanley2058"
+            href="https://github.com/stanley2058/WPButler"
             size="small"
             target="_blank"
             color="primary"
