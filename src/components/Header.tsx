@@ -48,7 +48,7 @@ export default function Header() {
       console.log(event);
     };
 
-  const list = () => (
+  const list = (
     <div
       className={classes.list}
       role="presentation"
@@ -85,7 +85,7 @@ export default function Header() {
             <MenuIcon />
           </IconButton>
           <Drawer anchor="left" open={state.open} onClose={toggleDrawer(false)}>
-            {list()}
+            {list}
           </Drawer>
           <Typography variant="h5" className={classes.title}>
             Web Programming Butler
