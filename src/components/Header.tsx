@@ -10,15 +10,18 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@material-ui/core";
-import { Class, Info } from "@material-ui/icons";
+import { Class, Info, Settings } from "@material-ui/icons";
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: { flexGrow: 1 },
   menuButton: { marginRight: theme.spacing(2) },
-  title: { flexGrow: 1 },
+  title: {
+    cursor: "pointer",
+  },
   list: { width: 200 },
 }));
 
@@ -30,15 +33,18 @@ export default function Header() {
   const entries = [
     {
       name: "教室",
-      path: "/",
+      path: "/classroom",
       icon: <Class />,
-      action: () => history.push("/"),
+    },
+    {
+      name: "助教管理",
+      path: "/settings",
+      icon: <Settings />,
     },
     {
       name: "關於本站",
       path: "/about",
       icon: <Info />,
-      action: () => history.push("/about"),
     },
   ];
 
@@ -61,7 +67,9 @@ export default function Header() {
             button
             component="a"
             key={entry.name}
-            onClick={entry.action}
+            onClick={() => {
+              history.push(entry.path);
+            }}
           >
             <ListItemIcon>{entry.icon}</ListItemIcon>
             <ListItemText primary={entry.name} />
@@ -87,9 +95,18 @@ export default function Header() {
           <Drawer anchor="left" open={state.open} onClose={toggleDrawer(false)}>
             {list}
           </Drawer>
-          <Typography variant="h5" className={classes.title}>
-            Web Programming Butler
-          </Typography>
+          <Tooltip title="回首頁">
+            <Typography
+              variant="h5"
+              className={classes.title}
+              component="span"
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              Web Programming Butler
+            </Typography>
+          </Tooltip>
         </Toolbar>
       </AppBar>
     </div>

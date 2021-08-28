@@ -1,8 +1,5 @@
 import React from "react";
-import Header from "../components/Header";
 
-const Classroom = () => {
-  return <Header />;
-};
-
-export default Classroom;
+export default function Classroom() {
+  return <div>Classroom</div>;
+}
