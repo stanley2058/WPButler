@@ -9,12 +9,7 @@ import SelectedSeat from "../entities/classroom-objects/SelectedSeat";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      position: "relative",
-      width: "30em",
-      top: "3em",
-      left: "calc(50% - 15em)",
       textAlign: "center",
-      fontSize: "1.1em",
     },
     leftAndRightGrid: {
       height: "100%",
