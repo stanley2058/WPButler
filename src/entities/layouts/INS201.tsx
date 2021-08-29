@@ -7,17 +7,17 @@ const INS201: ILayout = {
   name: "後教室 (201)",
   scenes: {
     top: [
-      { element: <Door /> },
-      { element: <Window /> },
-      { element: <Door /> },
+      { element: <Door />, width: 1 },
+      { element: <Window />, width: true },
+      { element: <Door />, width: 1 },
     ],
-    left: [{ element: <WhiteBoard /> }],
+    left: [{ element: <WhiteBoard />, width: true }],
     right: [
-      { element: <Door /> },
-      { element: <Window /> },
-      { element: <Door /> },
+      { element: <Door />, width: 1 },
+      { element: <Window />, width: true },
+      { element: <Door />, width: 1 },
     ],
-    bottom: [{ element: <Window /> }],
+    bottom: [{ element: <Window />, width: true }],
   },
   seats: [
     [1, 1, 1, 1, 1, 1],

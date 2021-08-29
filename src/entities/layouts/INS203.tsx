@@ -6,14 +6,20 @@ const INS203: ILayout = {
   id: "INS203",
   name: "前教室 (203)",
   scenes: {
-    top: [{ element: <Door /> }, { element: <Window /> }],
-    left: [
-      { element: <Door /> },
-      { element: <Window /> },
-      { element: <Door /> },
+    top: [
+      { element: <Door />, width: 1 },
+      { element: <Window />, width: true },
     ],
-    right: [{ element: <Teacher /> }, { element: <WhiteBoard /> }],
-    bottom: [{ element: <Window /> }],
+    left: [
+      { element: <Door />, width: 1 },
+      { element: <Window />, width: true },
+      { element: <Door />, width: 1 },
+    ],
+    right: [
+      { element: <Teacher />, width: 2 },
+      { element: <WhiteBoard />, width: true },
+    ],
+    bottom: [{ element: <Window />, width: true }],
   },
   seats: [
     [0, 0, 1, 1, 1, 1],

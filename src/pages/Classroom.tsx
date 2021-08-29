@@ -1,10 +1,27 @@
-import React from "react";
-import { LayoutUtils } from "../entities/Layout";
+import React, { useState } from "react";
+import ClassroomLayout from "../components/ClassroomLayout";
+import ILayout from "../entities/Layout";
 import { INS203 } from "../entities/layouts";
+import SeatSelectionService from "../services/SeatSelectionService";
 
 export default function Classroom() {
-  console.log(INS203);
-  console.log(LayoutUtils.rotateClockwise(INS203));
+  const [state, setState] = useState<{
+    layout: ILayout;
+    sitting?: { row: number; col: number };
+  }>({
+    layout: INS203,
+  });
 
-  return <div>Classroom</div>;
+  SeatSelectionService.Instance.register(
+    "classroom-selection-listener",
+    (row: number, col: number) => {
+      setState({ ...state, sitting: { row, col } });
+    }
+  );
+
+  return (
+    <div>
+      <ClassroomLayout layout={state.layout} sitting={state.sitting} />
+    </div>
+  );
 }

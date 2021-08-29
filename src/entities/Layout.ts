@@ -1,3 +1,5 @@
+import { GridSize } from "@material-ui/core";
+
 export default interface ILayout {
   // classroom id
   id: string;
@@ -5,13 +7,13 @@ export default interface ILayout {
   name: string;
   scenes: {
     // top: upper wall while displaying
-    top: { element: JSX.Element }[];
+    top: { element: JSX.Element; width: boolean | GridSize }[];
     // left: left wall while displaying
-    left: { element: JSX.Element }[];
+    left: { element: JSX.Element; width: boolean | GridSize }[];
     // right: right wall while displaying
-    right: { element: JSX.Element }[];
+    right: { element: JSX.Element; width: boolean | GridSize }[];
     // bottom: bottom wall while displaying
-    bottom: { element: JSX.Element }[];
+    bottom: { element: JSX.Element; width: boolean | GridSize }[];
   };
   // 0: space, 1: seat; must be rectangle
   seats: number[][];
