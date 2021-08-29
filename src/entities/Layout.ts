@@ -66,4 +66,35 @@ export class LayoutUtils {
     }
     return rotated;
   }
+
+  static translateLocationClockwise(
+    oriLayout: ILayout,
+    row: number,
+    col: number
+  ): { row: number; col: number } {
+    const height = oriLayout.seats.length;
+    return { row: col, col: height - row - 1 };
+  }
+  static translateLocationCounterclockwise(
+    oriLayout: ILayout,
+    row: number,
+    col: number
+  ): { row: number; col: number } {
+    const width = oriLayout.seats[0].length;
+    return { row: width - col - 1, col: row };
+  }
+
+  static layoutToRotation(layout: ILayout, rotation: number): ILayout {
+    rotation %= 4;
+    if (rotation > 0) {
+      // clockwise
+      for (let i = 0; i < rotation; i++)
+        layout = LayoutUtils.rotateClockwise(layout);
+    } else if (rotation < 0) {
+      // counterclockwise
+      for (let i = 0; i < rotation; i++)
+        layout = LayoutUtils.rotateCounterclockwise(layout);
+    }
+    return layout;
+  }
 }

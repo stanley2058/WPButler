@@ -13,7 +13,7 @@ export default function Seat(props: { row: number; col: number }) {
   return (
     <a
       className={classes.root}
-      onClick={(e) => {
+      onClick={() => {
         SeatSelectionService.Instance.emitSelection(props.row, props.col);
       }}
     >
