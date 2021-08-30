@@ -3,7 +3,7 @@ import { Grid, makeStyles, Theme } from "@material-ui/core";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
 import ILayout, { LayoutUtils } from "../entities/Layout";
-import { INS201, INS203 } from "../entities/layouts";
+import { INS201, INS203, INS203_201 } from "../entities/layouts";
 import SeatSelectionService from "../services/SeatSelectionService";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: "2em",
     display: "flex",
     justifyContent: "center",
+    paddingBottom: "1em",
   },
   grid: {
     maxWidth: "30em",
@@ -25,7 +26,7 @@ export default function Classroom() {
     sitting?: { row: number; col: number };
     rotation: number;
   }>({
-    layout: INS203,
+    layout: INS203_201,
     rotation: 0,
     studentInfo: { id: "10957032", called: false },
   });

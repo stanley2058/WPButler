@@ -18,7 +18,7 @@ export default function Seat(props: { row: number; col: number }) {
       }}
     >
       <Tooltip title="移動到這裡">
-        <EventSeat fontSize="large" color="secondary" />
+        <EventSeat color="secondary" />
       </Tooltip>
     </a>
   );

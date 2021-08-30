@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: "100%",
       maxHeight: "100%",
       width: "100%",
+      writingMode: "vertical-lr",
     },
     seatBase: {
       flexDirection: "column",

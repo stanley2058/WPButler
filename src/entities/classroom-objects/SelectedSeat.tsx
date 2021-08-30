@@ -12,7 +12,7 @@ export default function SelectedSeat() {
   return (
     <div className={classes.root}>
       <Tooltip title="現在的座位">
-        <PersonPin fontSize="large" color="primary" />
+        <PersonPin color="primary" />
       </Tooltip>
     </div>
   );
