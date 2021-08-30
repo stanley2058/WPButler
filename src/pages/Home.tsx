@@ -14,17 +14,19 @@ import { School, Class, Info } from "@material-ui/icons";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
-      height: "100vh",
-      overflowX: "hidden",
+      display: "flex",
+      justifyContent: "center",
+      placeItems: "center",
+      height: "100%",
     },
     rootGrid: {
       position: "relative",
-      top: "3em",
+      top: "6em",
       display: "flex",
       flexDirection: "row",
       placeItems: "center",
       justifyContent: "center",
+      maxWidth: "60em",
     },
     card: {
       padding: theme.spacing(1),
@@ -38,7 +40,7 @@ export default function Home() {
 
   return (
     <div className={classes.root}>
-      <Grid className={classes.rootGrid} container spacing={3}>
+      <Grid className={classes.rootGrid} container>
         <Grid item sm={8} xs={11}>
           <Card className={classes.card}>
             <CardContent>
