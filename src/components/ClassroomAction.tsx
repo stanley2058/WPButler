@@ -16,6 +16,7 @@ import {
   EmojiPeople,
   RotateLeft,
   RotateRight,
+  Help,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,6 +31,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   action: {
     display: "flex",
+    flexDirection: "column",
+    gap: ".5em",
     placeItems: "center",
     justifyContent: "center",
   },
@@ -54,7 +57,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     justifyContent: "space-evenly",
     placeItems: "center",
-    marginTop: "1em",
   },
 }));
 export default function ClassroomAction(props: {
@@ -76,13 +78,12 @@ export default function ClassroomAction(props: {
         </div>
         <div className={classes.waitingQueueRoot}>
           <div className={classes.waitingQueue}>
-            <Tooltip title="你的順位">
+            <Tooltip title="目前順位">
               <Badge
                 color="secondary"
                 badgeContent={props.queue || 0}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 overlap="circular"
-                showZero
               >
                 <EmojiPeople
                   fontSize="large"
@@ -114,6 +115,11 @@ export default function ClassroomAction(props: {
           <Button startIcon={<Notifications />} color="primary">
             呼叫助教
           </Button>
+          <Button startIcon={<Help />} color="primary">
+            常見問題
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup variant="contained">
           <Button startIcon={<LibraryBooks />} color="primary">
             本週作業
           </Button>
