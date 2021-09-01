@@ -17,6 +17,7 @@ import {
   Materialui,
   Github,
   Googlefonts,
+  Firebase,
 } from "@icons-pack/react-simple-icons";
 import { Mail } from "@material-ui/icons";
 
@@ -52,6 +53,11 @@ export default function About() {
       src: "material-ui",
       img: <Materialui color="#0081CB" size={36} />,
       url: "https://material-ui.com/",
+    },
+    {
+      src: "firebase",
+      img: <Firebase color="#FFCA28" size={36} />,
+      url: "https://firebase.google.com/",
     },
     {
       src: "google-fonts",

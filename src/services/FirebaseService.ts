@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -17,11 +16,9 @@ export default class FirebaseService {
   }
   private constructor() {
     this.app = initializeApp(Config.firebaseConfig);
-    this.analytics = getAnalytics(this.app);
     this.auth = getAuth();
   }
   private app;
-  private analytics;
   private auth;
 
   private user?: User;
@@ -32,7 +29,7 @@ export default class FirebaseService {
   ): Promise<boolean> {
     try {
       const userCredential = await createUserWithEmailAndPassword(
-        this.auth,
+        FirebaseService.Instance.auth,
         email,
         password
       );
@@ -49,7 +46,7 @@ export default class FirebaseService {
       return FirebaseService.Instance.currentUser;
     try {
       const userCredential = await signInWithEmailAndPassword(
-        this.auth,
+        FirebaseService.Instance.auth,
         email,
         password
       );
@@ -60,7 +57,15 @@ export default class FirebaseService {
     return FirebaseService.Instance.currentUser;
   }
 
+  async signOut() {
+    await FirebaseService.Instance.auth.signOut();
+  }
+
   get currentUser(): User | null {
-    return FirebaseService.Instance.user || null;
+    return FirebaseService.Instance.auth.currentUser;
+  }
+
+  get hasLogin(): boolean {
+    return !!FirebaseService.Instance.currentUser;
   }
 }
