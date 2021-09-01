@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Grid, makeStyles, Theme } from "@material-ui/core";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
@@ -6,6 +6,7 @@ import ILayout, { LayoutUtils } from "../entities/Layout";
 import { INS203_201 } from "../entities/layouts";
 import SeatSelectionService from "../services/SeatSelectionService";
 import FirebaseService from "../services/FirebaseService";
+import SeatGuideDialog from "../components/SeatGuideDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -33,20 +34,28 @@ export default function Classroom() {
   const [state, setState] = useState<ClassroomState>({
     layout: INS203_201,
     rotation: 0,
-    studentInfo: { id: "10957032", called: false },
   });
   // TODO: add service to deal with actions and update ui
+  const onGuideDialogClose = (id: string, rotation: number) => {
+    setState({
+      ...state,
+      layout: LayoutUtils.layoutToRotation(state.layout, rotation),
+      rotation,
+      studentInfo: {
+        id,
+        called: false,
+      },
+    });
+  };
 
-  useEffect(() => {
-    (async () => {
-      if (state.hasLogin === undefined) {
-        setState({
-          ...state,
-          hasLogin: await FirebaseService.Instance.hasLogin,
-        });
-      }
-    })();
-  }, []);
+  FirebaseService.Instance.auth.onAuthStateChanged((user) => {
+    if (state.hasLogin === undefined) {
+      setState({
+        ...state,
+        hasLogin: !!user,
+      });
+    }
+  });
 
   SeatSelectionService.Instance.register(
     "classroom-selection-listener",
@@ -57,6 +66,12 @@ export default function Classroom() {
 
   return (
     <div className={classes.root}>
+      {!state.hasLogin && (
+        <SeatGuideDialog
+          open={!state.studentInfo}
+          onClose={onGuideDialogClose}
+        />
+      )}
       <Grid container direction="column" className={classes.grid}>
         <Grid item xs>
           <ClassroomAction
