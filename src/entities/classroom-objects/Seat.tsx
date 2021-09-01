@@ -8,8 +8,13 @@ const useStyles = makeStyles(() => ({
     cursor: "pointer",
   },
 }));
-export default function Seat(props: { row: number; col: number }) {
+export default function Seat(props: {
+  row: number;
+  col: number;
+  clickable?: boolean;
+}) {
   const classes = useStyles();
+  if (!props.clickable) return <EventSeat color="secondary" />;
   return (
     <a
       className={classes.root}

@@ -19,7 +19,6 @@ import {
   Help,
   Done,
   Create,
-  HighlightOff,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -91,15 +90,12 @@ function TAActions() {
   const classes = useStyles();
   return (
     <div className={classes.action}>
-      <ButtonGroup variant="contained" orientation="vertical">
+      <ButtonGroup variant="contained">
         <Button startIcon={<Done />} color="primary">
           完成目前
         </Button>
         <Button startIcon={<Create />} color="primary">
           手動Demo
-        </Button>
-        <Button startIcon={<HighlightOff />} color="secondary">
-          取消目前
         </Button>
       </ButtonGroup>
     </div>

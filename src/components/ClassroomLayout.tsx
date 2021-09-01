@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ClassroomLayout(props: {
   layout: ILayout;
   sitting?: { row: number; col: number };
+  clickable?: boolean;
 }) {
   const classes = useStyles();
 
@@ -80,10 +81,17 @@ export default function ClassroomLayout(props: {
                     props.sitting.row === id &&
                     props.sitting.col === sid
                   ) {
-                    return <SelectedSeat key={sid} />;
+                    return (
+                      <SelectedSeat hasLogin={!props.clickable} key={sid} />
+                    );
                   }
                   return s ? (
-                    <Seat row={id} col={sid} key={sid} />
+                    <Seat
+                      row={id}
+                      col={sid}
+                      clickable={props.clickable}
+                      key={sid}
+                    />
                   ) : (
                     <Space key={sid} />
                   );

@@ -87,7 +87,11 @@ export default function Classroom() {
           />
         </Grid>
         <Grid item xs>
-          <ClassroomLayout layout={state.layout} sitting={state.sitting} />
+          <ClassroomLayout
+            layout={state.layout}
+            sitting={state.sitting}
+            clickable={!state.hasLogin}
+          />
         </Grid>
       </Grid>
     </div>
