@@ -33,7 +33,9 @@ const useStyles = makeStyles({
 });
 export default function Login() {
   const history = useHistory();
-  if (FirebaseService.Instance.hasLogin) history.push("/settings");
+  (async () => {
+    if (await FirebaseService.Instance.hasLogin) history.push("/settings");
+  })();
   const classes = useStyles();
 
   const login = async (event: SyntheticEvent<HTMLFormElement>) => {

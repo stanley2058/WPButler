@@ -21,19 +21,16 @@ export default class FirebaseService {
   private app;
   private auth;
 
-  private user?: User;
-
   async createAccount(
     email: string,
     password: string = "soselab401"
   ): Promise<boolean> {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      await createUserWithEmailAndPassword(
         FirebaseService.Instance.auth,
         email,
         password
       );
-      FirebaseService.Instance.user = userCredential.user;
     } catch (error) {
       console.error(error);
       return false;
@@ -42,15 +39,14 @@ export default class FirebaseService {
   }
 
   async signIn(email: string, password: string): Promise<User | null> {
-    if (FirebaseService.Instance.user)
+    if (FirebaseService.Instance.currentUser)
       return FirebaseService.Instance.currentUser;
     try {
-      const userCredential = await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         FirebaseService.Instance.auth,
         email,
         password
       );
-      FirebaseService.Instance.user = userCredential.user;
     } catch (error) {
       console.error(error);
     }
@@ -65,7 +61,9 @@ export default class FirebaseService {
     return FirebaseService.Instance.auth.currentUser;
   }
 
-  get hasLogin(): boolean {
-    return !!FirebaseService.Instance.currentUser;
+  get hasLogin(): Promise<boolean> {
+    return new Promise<boolean>((res) =>
+      FirebaseService.Instance.auth.onAuthStateChanged((user) => res(!!user))
+    );
   }
 }
