@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, MouseEvent } from "react";
+import React, { useState, KeyboardEvent, MouseEvent, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import {
   AppBar,
@@ -12,9 +12,10 @@ import {
   ListItemText,
   Tooltip,
 } from "@material-ui/core";
-import { Class, Info, Settings } from "@material-ui/icons";
+import { Class, Info, Settings, ExitToApp } from "@material-ui/icons";
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles } from "@material-ui/core/styles";
+import FirebaseService from "../services/FirebaseService";
 
 const useStyles = makeStyles((theme) => ({
   root: { flexGrow: 1 },
@@ -27,8 +28,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
   const classes = useStyles();
-  const [state, setState] = useState({ open: false });
   const history = useHistory();
+  const [state, setState] = useState<{ open: boolean; hasLogin?: boolean }>({
+    open: false,
+  });
+  FirebaseService.Instance.auth.onAuthStateChanged((user) => {
+    if (!!user !== state.hasLogin) {
+      setState({
+        ...state,
+        hasLogin: !!user,
+      });
+    }
+  });
 
   const entries = [
     {
@@ -75,6 +86,22 @@ export default function Header() {
             <ListItemText primary={entry.name} />
           </ListItem>
         ))}
+        {state.hasLogin && (
+          <ListItem
+            button
+            component="a"
+            key="logout"
+            onClick={async () => {
+              await FirebaseService.Instance.signOut();
+              history.push("/");
+            }}
+          >
+            <ListItemIcon>
+              <ExitToApp />
+            </ListItemIcon>
+            <ListItemText primary="登出" />
+          </ListItem>
+        )}
       </List>
     </div>
   );

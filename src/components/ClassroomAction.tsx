@@ -17,6 +17,9 @@ import {
   RotateLeft,
   RotateRight,
   Help,
+  Done,
+  Create,
+  HighlightOff,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -59,10 +62,60 @@ const useStyles = makeStyles((theme: Theme) => ({
     placeItems: "center",
   },
 }));
+
+function StudentActions() {
+  const classes = useStyles();
+  return (
+    <div className={classes.action}>
+      <ButtonGroup variant="contained">
+        <Button startIcon={<Notifications />} color="primary">
+          呼叫助教
+        </Button>
+        <Button startIcon={<Help />} color="primary">
+          常見問題
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup variant="contained">
+        <Button startIcon={<LibraryBooks />} color="primary">
+          本週作業
+        </Button>
+        <Button startIcon={<Replay />} color="secondary">
+          重設座位
+        </Button>
+      </ButtonGroup>
+    </div>
+  );
+}
+
+function TAActions() {
+  const classes = useStyles();
+  return (
+    <div className={classes.action}>
+      <ButtonGroup variant="contained" orientation="vertical">
+        <Button startIcon={<Done />} color="primary">
+          完成目前
+        </Button>
+        <Button startIcon={<Create />} color="primary">
+          手動Demo
+        </Button>
+        <Button startIcon={<HighlightOff />} color="secondary">
+          取消目前
+        </Button>
+      </ButtonGroup>
+    </div>
+  );
+}
+
+function Actions(props: { hasLogin?: boolean }) {
+  if (props.hasLogin) return <TAActions />;
+  return <StudentActions />;
+}
+
 export default function ClassroomAction(props: {
   info?: { id: string; called: boolean };
   waiting?: number;
   queue?: number;
+  hasLogin?: boolean;
   onRotate: (clockwise: boolean) => void;
 }) {
   const classes = useStyles();
@@ -71,27 +124,31 @@ export default function ClassroomAction(props: {
     <div className={classes.root}>
       <div className={classes.info}>
         <div>
-          <b>
-            學號：
-            <span className={classes.idNumber}>{props.info?.id || ""}</span>
-          </b>
+          {!props.hasLogin && (
+            <b>
+              學號：
+              <span className={classes.idNumber}>{props.info?.id || ""}</span>
+            </b>
+          )}
         </div>
         <div className={classes.waitingQueueRoot}>
           <div className={classes.waitingQueue}>
-            <Tooltip title="目前順位">
-              <Badge
-                color="secondary"
-                badgeContent={props.queue || 0}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                overlap="circular"
-              >
-                <EmojiPeople
-                  fontSize="large"
-                  color="primary"
-                  className={classes.icons}
-                />
-              </Badge>
-            </Tooltip>
+            {!props.hasLogin && (
+              <Tooltip title="目前順位">
+                <Badge
+                  color="secondary"
+                  badgeContent={props.queue || 0}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  overlap="circular"
+                >
+                  <EmojiPeople
+                    fontSize="large"
+                    color="primary"
+                    className={classes.icons}
+                  />
+                </Badge>
+              </Tooltip>
+            )}
             <Tooltip title="目前等待人數">
               <Badge
                 color="secondary"
@@ -110,24 +167,7 @@ export default function ClassroomAction(props: {
           </div>
         </div>
       </div>
-      <div className={classes.action}>
-        <ButtonGroup variant="contained">
-          <Button startIcon={<Notifications />} color="primary">
-            呼叫助教
-          </Button>
-          <Button startIcon={<Help />} color="primary">
-            常見問題
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup variant="contained">
-          <Button startIcon={<LibraryBooks />} color="primary">
-            本週作業
-          </Button>
-          <Button startIcon={<Replay />} color="secondary">
-            重設座位
-          </Button>
-        </ButtonGroup>
-      </div>
+      <Actions hasLogin={props.hasLogin} />
       <div className={classes.rotateControl}>
         <Tooltip title="逆時針旋轉">
           <IconButton

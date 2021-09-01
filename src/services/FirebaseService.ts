@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   User,
+  Auth,
 } from "firebase/auth";
 import Config from "../../Config";
 
@@ -18,8 +19,8 @@ export default class FirebaseService {
     this.app = initializeApp(Config.firebaseConfig);
     this.auth = getAuth();
   }
+  auth: Auth;
   private app;
-  private auth;
 
   async createAccount(
     email: string,
