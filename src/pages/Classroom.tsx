@@ -7,6 +7,7 @@ import { INS203_201 } from "../entities/layouts";
 import SeatSelectionService from "../services/SeatSelectionService";
 import FirebaseService from "../services/FirebaseService";
 import SeatGuideDialog from "../components/SeatGuideDialog";
+import ClassroomUtils from "../services/ClassroomUtils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -36,26 +37,16 @@ export default function Classroom() {
     rotation: 0,
   });
   // TODO: add service to deal with actions and update ui
-  const onGuideDialogClose = (id: string, rotation: number) => {
-    setState({
-      ...state,
-      layout: LayoutUtils.layoutToRotation(state.layout, rotation),
-      rotation,
-      studentInfo: {
-        id,
-        called: false,
-      },
-    });
-  };
 
-  FirebaseService.Instance.auth.onAuthStateChanged((user) => {
-    if (state.hasLogin === undefined) {
+  FirebaseService.Instance.onAuthStateChanged(
+    (hasLogin) => {
       setState({
         ...state,
-        hasLogin: !!user,
+        hasLogin,
       });
-    }
-  });
+    },
+    () => state.hasLogin === undefined
+  );
 
   SeatSelectionService.Instance.register(
     "classroom-selection-listener",
@@ -63,6 +54,13 @@ export default function Classroom() {
       setState({ ...state, sitting: { row, col } });
     }
   );
+
+  const onGuideDialogClose = (id: string, rotation: number) => {
+    setState(ClassroomUtils.onGuideDialogClose(state, id, rotation));
+  };
+  const onRotate = (clockwise: boolean) => {
+    setState(ClassroomUtils.onRotate(state, clockwise));
+  };
 
   return (
     <div className={classes.root}>
@@ -77,28 +75,7 @@ export default function Classroom() {
           <ClassroomAction
             hasLogin={state.hasLogin}
             info={state.studentInfo}
-            onRotate={(clockwise: boolean) => {
-              const rotation = clockwise
-                ? state.rotation + 1
-                : state.rotation - 1;
-              const layout = clockwise
-                ? LayoutUtils.rotateClockwise(state.layout)
-                : LayoutUtils.rotateCounterclockwise(state.layout);
-              if (state.sitting) {
-                const { row, col } = clockwise
-                  ? LayoutUtils.translateLocationClockwise(
-                      state.layout,
-                      state.sitting.row,
-                      state.sitting.col
-                    )
-                  : LayoutUtils.translateLocationCounterclockwise(
-                      state.layout,
-                      state.sitting.row,
-                      state.sitting.col
-                    );
-                setState({ ...state, layout, rotation, sitting: { row, col } });
-              } else setState({ ...state, layout, rotation });
-            }}
+            onRotate={onRotate}
           />
         </Grid>
         <Grid item xs>

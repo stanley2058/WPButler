@@ -32,14 +32,15 @@ export default function Header() {
   const [state, setState] = useState<{ open: boolean; hasLogin?: boolean }>({
     open: false,
   });
-  FirebaseService.Instance.auth.onAuthStateChanged((user) => {
-    if (!!user !== state.hasLogin) {
+  FirebaseService.Instance.onAuthStateChanged(
+    (hasLogin) => {
       setState({
         ...state,
-        hasLogin: !!user,
+        hasLogin,
       });
-    }
-  });
+    },
+    (hasLogin) => hasLogin !== state.hasLogin
+  );
 
   const entries = [
     {

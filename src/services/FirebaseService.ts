@@ -19,7 +19,7 @@ export default class FirebaseService {
     this.app = initializeApp(Config.firebaseConfig);
     this.auth = getAuth();
   }
-  auth: Auth;
+  private auth;
   private app;
 
   async createAccount(
@@ -65,6 +65,15 @@ export default class FirebaseService {
   get hasLogin(): Promise<boolean> {
     return new Promise<boolean>((res) =>
       FirebaseService.Instance.auth.onAuthStateChanged((user) => res(!!user))
+    );
+  }
+
+  onAuthStateChanged(
+    callback: (hasLogin: boolean) => void,
+    activateOn: (hasLogin: boolean) => boolean
+  ) {
+    FirebaseService.Instance.auth.onAuthStateChanged(
+      (user) => activateOn(!!user) && callback(!!user)
     );
   }
 }
