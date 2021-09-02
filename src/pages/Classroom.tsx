@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Grid, makeStyles, Theme } from "@material-ui/core";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
-import ILayout, { LayoutUtils } from "../entities/Layout";
 import { INS203_201 } from "../entities/layouts";
 import SeatSelectionService from "../services/SeatSelectionService";
 import FirebaseService from "../services/FirebaseService";
 import SeatGuideDialog from "../components/SeatGuideDialog";
-import ClassroomUtils from "../services/ClassroomUtils";
+import ClassroomUtils, { ClassroomState } from "../services/ClassroomUtils";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -22,16 +22,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface ClassroomState {
-  layout: ILayout;
-  studentInfo?: { id: string; called: boolean };
-  sitting?: { row: number; col: number };
-  rotation: number;
-  hasLogin?: boolean;
-}
-
 export default function Classroom() {
   const classes = useStyles();
+  const history = useHistory();
   const [state, setState] = useState<ClassroomState>({
     layout: INS203_201,
     rotation: 0,
@@ -61,6 +54,18 @@ export default function Classroom() {
   const onRotate = (clockwise: boolean) => {
     setState(ClassroomUtils.onRotate(state, clockwise));
   };
+  const actions = {
+    ...ClassroomUtils.getActions(state),
+    commonQuestions: () => history.push("/"),
+    thisWeekHomework: () => history.push(state.thisWeekHomeworkUrl || "/"),
+    resetSeat: () => {
+      setState({
+        layout: INS203_201,
+        rotation: 0,
+      });
+      ClassroomUtils.setGuideDialogOpenState(true);
+    },
+  };
 
   return (
     <div className={classes.root}>
@@ -76,6 +81,7 @@ export default function Classroom() {
             hasLogin={state.hasLogin}
             info={state.studentInfo}
             onRotate={onRotate}
+            actions={actions}
           />
         </Grid>
         <Grid item xs>

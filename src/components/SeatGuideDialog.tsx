@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import Swal from "sweetalert2";
+import ClassroomUtils from "../services/ClassroomUtils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   rotationActions: {
@@ -38,6 +39,15 @@ export default function SeatGuideDialog(props: {
   }>({
     isOpen: props.open,
     canComplete: false,
+  });
+
+  ClassroomUtils.onGuideDialogOpenStateChange((open) => {
+    if (open)
+      setState({
+        isOpen: open,
+        canComplete: false,
+      });
+    else setState({ ...state, isOpen: open });
   });
 
   const onClose = async () => {

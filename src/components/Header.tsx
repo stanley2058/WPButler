@@ -60,11 +60,9 @@ export default function Header() {
     },
   ];
 
-  const toggleDrawer =
-    (open: boolean) => (event: KeyboardEvent | MouseEvent) => {
-      setState({ ...state, open });
-      console.log(event);
-    };
+  const toggleDrawer = (open: boolean) => () => {
+    setState({ ...state, open });
+  };
 
   const list = (
     <div

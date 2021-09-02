@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import Actions from "./Classroom/Actions";
+import Actions, { IActions } from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";
 
@@ -25,6 +25,7 @@ export default function ClassroomAction(props: {
   queue?: number;
   hasLogin?: boolean;
   onRotate: (clockwise: boolean) => void;
+  actions: IActions;
 }) {
   const classes = useStyles();
 
@@ -45,7 +46,7 @@ export default function ClassroomAction(props: {
           queue={props.queue}
         />
       </div>
-      <Actions hasLogin={props.hasLogin} />
+      <Actions hasLogin={props.hasLogin} actions={props.actions} />
       <RotationControls onRotate={props.onRotate} />
     </div>
   );
