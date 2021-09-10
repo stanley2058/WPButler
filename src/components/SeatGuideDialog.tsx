@@ -10,13 +10,12 @@ import {
   ListItem,
   makeStyles,
   TextField,
-  Theme,
   Typography,
 } from "@material-ui/core";
 import Swal from "sweetalert2";
 import ClassroomUtils from "../services/ClassroomUtils";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   rotationActions: {
     display: "flex",
     flexDirection: "column",

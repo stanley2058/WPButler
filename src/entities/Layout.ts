@@ -26,10 +26,10 @@ export class LayoutUtils {
       id,
       name,
       scenes: {
-        top: scenes.left.reverse(),
+        top: [...scenes.left].reverse(),
         left: scenes.bottom,
         right: scenes.top,
-        bottom: scenes.right.reverse(),
+        bottom: [...scenes.right].reverse(),
       },
       seats: LayoutUtils.rotateMatrixClockwise(seats),
     };
@@ -41,8 +41,8 @@ export class LayoutUtils {
       name,
       scenes: {
         top: scenes.right,
-        left: scenes.top.reverse(),
-        right: scenes.bottom.reverse(),
+        left: [...scenes.top].reverse(),
+        right: [...scenes.bottom].reverse(),
         bottom: scenes.left,
       },
       seats: LayoutUtils.rotateMatrixCounterclockwise(seats),
@@ -85,7 +85,9 @@ export class LayoutUtils {
   }
 
   static layoutToRotation(layout: ILayout, rotation: number): ILayout {
+    console.log(rotation);
     rotation %= 4;
+    console.log(rotation);
     if (rotation > 0) {
       // clockwise
       for (let i = 0; i < rotation; i++)

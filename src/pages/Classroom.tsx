@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { Grid, makeStyles, Theme } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { Grid, makeStyles } from "@material-ui/core";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
-import { INS203_201 } from "../entities/layouts";
+import { INS201, INS203, INS203_201 } from "../entities/layouts";
 import SeatSelectionService from "../services/SeatSelectionService";
 import FirebaseService from "../services/FirebaseService";
 import SeatGuideDialog from "../components/SeatGuideDialog";
 import ClassroomUtils, { ClassroomState } from "../services/ClassroomUtils";
 import { useHistory } from "react-router-dom";
+import { LayoutUtils } from "../entities/Layout";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     position: "relative",
     top: "2em",
@@ -23,13 +24,42 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export default function Classroom() {
+  const layouts = [
+    { name: INS203_201.id, layout: INS203_201 },
+    { name: INS203.id, layout: INS203 },
+    { name: INS201.id, layout: INS201 },
+  ];
   const classes = useStyles();
   const history = useHistory();
   const [state, setState] = useState<ClassroomState>({
     layout: INS203_201,
     rotation: 0,
   });
-  // TODO: add service to deal with actions and update ui
+
+  const setAndSaveState = (newState: ClassroomState) => {
+    setState(newState);
+    localStorage.setItem("classroom", JSON.stringify(newState));
+  };
+
+  useEffect(() => {
+    const classroomRaw = localStorage.getItem("classroom");
+    if (classroomRaw) {
+      const { layout, rotation, studentInfo, sitting } = JSON.parse(
+        classroomRaw
+      ) as ClassroomState;
+      if (!studentInfo && !sitting) return;
+      const rLayout = layouts.find((l) => l.name === layout.id) || {
+        layout: INS203_201,
+      };
+      setState({
+        layout: LayoutUtils.layoutToRotation(rLayout.layout, rotation),
+        rotation,
+        studentInfo,
+        sitting,
+      });
+      ClassroomUtils.setGuideDialogOpenState(false);
+    }
+  }, []);
 
   FirebaseService.Instance.onAuthStateChanged(
     (hasLogin) => {
@@ -44,22 +74,22 @@ export default function Classroom() {
   SeatSelectionService.Instance.register(
     "classroom-selection-listener",
     (row: number, col: number) => {
-      setState({ ...state, sitting: { row, col } });
+      setAndSaveState({ ...state, sitting: { row, col } });
     }
   );
 
   const onGuideDialogClose = (id: string, rotation: number) => {
-    setState(ClassroomUtils.onGuideDialogClose(state, id, rotation));
+    setAndSaveState(ClassroomUtils.onGuideDialogClose(state, id, rotation));
   };
   const onRotate = (clockwise: boolean) => {
-    setState(ClassroomUtils.onRotate(state, clockwise));
+    setAndSaveState(ClassroomUtils.onRotate(state, clockwise));
   };
   const actions = {
     ...ClassroomUtils.getActions(state),
     commonQuestions: () => history.push("/"),
     thisWeekHomework: () => history.push(state.thisWeekHomeworkUrl || "/"),
     resetSeat: () => {
-      setState({
+      setAndSaveState({
         layout: INS203_201,
         rotation: 0,
       });
