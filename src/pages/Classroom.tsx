@@ -42,6 +42,10 @@ export default function Classroom() {
   };
 
   useEffect(() => {
+    // testing
+    FirebaseService.Instance.test();
+    // testing
+
     const classroomRaw = localStorage.getItem("classroom");
     if (classroomRaw) {
       const { layout, rotation, studentInfo, sitting } = JSON.parse(

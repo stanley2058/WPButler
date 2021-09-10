@@ -85,9 +85,7 @@ export class LayoutUtils {
   }
 
   static layoutToRotation(layout: ILayout, rotation: number): ILayout {
-    console.log(rotation);
     rotation %= 4;
-    console.log(rotation);
     if (rotation > 0) {
       // clockwise
       for (let i = 0; i < rotation; i++)
