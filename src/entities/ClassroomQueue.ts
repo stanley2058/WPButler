@@ -1,17 +1,7 @@
-import { DocumentReference, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 export interface ClassroomQueue {
-  queue: [
-    {
-      id: string;
-      rotation: number;
-      sitting: {
-        row: number;
-        col: number;
-      };
-      appliedAt: Timestamp;
-    }
-  ];
+  queue: QueueItem[];
   resolved: [
     {
       id: string;
@@ -19,5 +9,14 @@ export interface ClassroomQueue {
       resolvedAt: Timestamp;
     }
   ];
-  time: DocumentReference;
+}
+
+export interface QueueItem {
+  id: string;
+  rotation: number;
+  sitting: {
+    row: number;
+    col: number;
+  };
+  appliedAt: Timestamp;
 }

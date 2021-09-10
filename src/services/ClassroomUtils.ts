@@ -1,11 +1,18 @@
+import { Timestamp } from "@firebase/firestore";
+import { QueueItem } from "../entities/ClassroomQueue";
 import ILayout, { LayoutUtils } from "../entities/Layout";
+import FirebaseService from "./FirebaseService";
 
 export interface ClassroomState {
   layout: ILayout;
-  studentInfo?: { id: string; called: boolean };
+  studentInfo?: { id: string };
   sitting?: { row: number; col: number };
   rotation: number;
   hasLogin?: boolean;
+  waiting: {
+    waiting: number;
+    queue: number;
+  };
   thisWeekHomeworkUrl?: string;
 }
 
@@ -46,7 +53,6 @@ export default class ClassroomUtils {
       rotation,
       studentInfo: {
         id,
-        called: false,
       },
     };
   }
@@ -61,12 +67,25 @@ export default class ClassroomUtils {
   static getActions(state: ClassroomState) {
     return {
       call: () => ClassroomUtils.call(state),
+      cancelCall: () => ClassroomUtils.cancelCall(state),
       completeDemo: () => ClassroomUtils.completeDemo(state),
       manualDemo: () => ClassroomUtils.manualDemo(state),
     };
   }
 
-  static call(state: ClassroomState) {}
+  static call(state: ClassroomState) {
+    if (!state.studentInfo || !state.sitting) return;
+    FirebaseService.Instance.enqueue({
+      id: state.studentInfo.id,
+      rotation: state.rotation,
+      sitting: state.sitting,
+      appliedAt: Timestamp.now(),
+    });
+  }
+  static cancelCall(state: ClassroomState) {
+    if (!state.studentInfo) return;
+    FirebaseService.Instance.dequeue(state.studentInfo.id);
+  }
   static completeDemo(state: ClassroomState) {}
   static manualDemo(state: ClassroomState) {}
 }

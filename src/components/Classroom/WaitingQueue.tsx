@@ -32,7 +32,7 @@ export default function WaitingQueue(props: {
           <Tooltip title="目前順位">
             <Badge
               color="secondary"
-              badgeContent={props.queue || 0}
+              badgeContent={(props.queue ?? -1) + 1}
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               overlap="circular"
             >
@@ -47,7 +47,7 @@ export default function WaitingQueue(props: {
         <Tooltip title="目前等待人數">
           <Badge
             color="secondary"
-            badgeContent={props.waiting || 0}
+            badgeContent={props.waiting}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             overlap="circular"
             showZero

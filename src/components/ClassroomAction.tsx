@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function ClassroomAction(props: {
-  info?: { id: string; called: boolean };
+  info?: { id: string };
   waiting?: number;
   queue?: number;
   hasLogin?: boolean;
@@ -46,7 +46,11 @@ export default function ClassroomAction(props: {
           queue={props.queue}
         />
       </div>
-      <Actions hasLogin={props.hasLogin} actions={props.actions} />
+      <Actions
+        hasLogin={props.hasLogin}
+        actions={props.actions}
+        isInQueue={props.queue !== -1}
+      />
       <RotationControls onRotate={props.onRotate} />
     </div>
   );

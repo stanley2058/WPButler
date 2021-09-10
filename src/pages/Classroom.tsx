@@ -34,7 +34,12 @@ export default function Classroom() {
   const [state, setState] = useState<ClassroomState>({
     layout: INS203_201,
     rotation: 0,
+    waiting: {
+      waiting: 0,
+      queue: -1,
+    },
   });
+  const [loaded, setLoaded] = useState(false);
 
   const setAndSaveState = (newState: ClassroomState) => {
     setState(newState);
@@ -43,7 +48,7 @@ export default function Classroom() {
 
   useEffect(() => {
     // testing
-    FirebaseService.Instance.test();
+    // FirebaseService.Instance.test();
     // testing
 
     const classroomRaw = localStorage.getItem("classroom");
@@ -60,27 +65,47 @@ export default function Classroom() {
         rotation,
         studentInfo,
         sitting,
+        waiting: state.waiting,
       });
       ClassroomUtils.setGuideDialogOpenState(false);
     }
   }, []);
 
-  FirebaseService.Instance.onAuthStateChanged(
-    (hasLogin) => {
+  useEffect(() => {
+    console.log(state);
+    if (loaded || !state.studentInfo) return;
+    FirebaseService.Instance.onClassroomQueueChanged((queue) => {
+      if (!queue) return;
+      const index = queue.queue.findIndex(
+        (q) => q.id === state.studentInfo?.id
+      );
       setState({
         ...state,
-        hasLogin,
+        waiting: {
+          waiting: queue.queue.length,
+          queue: index,
+        },
       });
-    },
-    () => state.hasLogin === undefined
-  );
+    });
 
-  SeatSelectionService.Instance.register(
-    "classroom-selection-listener",
-    (row: number, col: number) => {
-      setAndSaveState({ ...state, sitting: { row, col } });
-    }
-  );
+    FirebaseService.Instance.onAuthStateChanged(
+      (hasLogin) => {
+        setState({
+          ...state,
+          hasLogin,
+        });
+      },
+      () => state.hasLogin === undefined
+    );
+
+    SeatSelectionService.Instance.register(
+      "classroom-selection-listener",
+      (row: number, col: number) => {
+        setAndSaveState({ ...state, sitting: { row, col } });
+      }
+    );
+    setLoaded(true);
+  }, [state]);
 
   const onGuideDialogClose = (id: string, rotation: number) => {
     setAndSaveState(ClassroomUtils.onGuideDialogClose(state, id, rotation));
@@ -96,6 +121,7 @@ export default function Classroom() {
       setAndSaveState({
         layout: INS203_201,
         rotation: 0,
+        waiting: state.waiting,
       });
       ClassroomUtils.setGuideDialogOpenState(true);
     },
@@ -112,6 +138,8 @@ export default function Classroom() {
       <Grid container direction="column" className={classes.grid}>
         <Grid item xs>
           <ClassroomAction
+            queue={state.waiting.queue}
+            waiting={state.waiting.waiting}
             hasLogin={state.hasLogin}
             info={state.studentInfo}
             onRotate={onRotate}
@@ -122,7 +150,7 @@ export default function Classroom() {
           <ClassroomLayout
             layout={state.layout}
             sitting={state.sitting}
-            clickable={!state.hasLogin}
+            clickable={!state.hasLogin && state.waiting.queue === -1}
           />
         </Grid>
       </Grid>

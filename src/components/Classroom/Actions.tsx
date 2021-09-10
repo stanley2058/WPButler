@@ -7,10 +7,12 @@ import {
   Replay,
   Done,
   Create,
+  Cancel,
 } from "@material-ui/icons";
 
 export interface IActions {
   call: () => void;
+  cancelCall: () => void;
   commonQuestions: () => void;
   thisWeekHomework: () => void;
   resetSeat: () => void;
@@ -28,18 +30,28 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function StudentActions(props: { actions: IActions }) {
+function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
   const classes = useStyles();
   return (
     <div className={classes.action}>
       <ButtonGroup variant="contained">
-        <Button
-          startIcon={<Notifications />}
-          color="primary"
-          onClick={props.actions.call}
-        >
-          呼叫助教
-        </Button>
+        {props.isInQueue ? (
+          <Button
+            startIcon={<Cancel />}
+            color="secondary"
+            onClick={props.actions.cancelCall}
+          >
+            取消呼叫
+          </Button>
+        ) : (
+          <Button
+            startIcon={<Notifications />}
+            color="primary"
+            onClick={props.actions.call}
+          >
+            呼叫助教
+          </Button>
+        )}
         <Button
           startIcon={<Help />}
           color="primary"
@@ -60,6 +72,7 @@ function StudentActions(props: { actions: IActions }) {
           startIcon={<Replay />}
           color="secondary"
           onClick={props.actions.resetSeat}
+          disabled={props.isInQueue}
         >
           重設座位
         </Button>
@@ -94,8 +107,9 @@ function TAActions(props: { actions: IActions }) {
 
 export default function Actions(props: {
   hasLogin?: boolean;
+  isInQueue: boolean;
   actions: IActions;
 }) {
   if (props.hasLogin) return <TAActions actions={props.actions} />;
-  return <StudentActions actions={props.actions} />;
+  return <StudentActions isInQueue={props.isInQueue} actions={props.actions} />;
 }
