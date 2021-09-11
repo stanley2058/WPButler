@@ -92,7 +92,7 @@ export default function Classroom() {
     if (hasLogin === undefined) return;
     const classTimeUnSub = FirebaseService.Instance.onClassTimeChanged(
       (isSessionAlive, classTime) => {
-        if (!isSessionAlive) {
+        if (!isSessionAlive && !hasLogin) {
           // TODO: prompt not alive and leave
         } else {
           if (classTime?.thisWeekHomeworkUrl && stateRef.current) {

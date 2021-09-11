@@ -111,6 +111,15 @@ export default class FirebaseService {
     );
   }
 
+  private get currentClassroomQueueRef(): DocumentReference<DocumentData> | null {
+    if (!FirebaseService.Instance.classTime) return null;
+    return doc(
+      FirebaseService.Instance.db,
+      "classroom-queue",
+      FirebaseService.Instance.classTime.id
+    );
+  }
+
   isDataReady() {
     return new Promise<void>((res) => {
       const timer = setInterval(() => {
@@ -170,13 +179,12 @@ export default class FirebaseService {
     );
   }
 
-  private get currentClassroomQueueRef(): DocumentReference<DocumentData> | null {
-    if (!FirebaseService.Instance.classTime) return null;
-    return doc(
-      FirebaseService.Instance.db,
-      "classroom-queue",
-      FirebaseService.Instance.classTime.id
-    );
+  get currentWaitingQueue(): ClassroomQueue | null {
+    return FirebaseService.Instance.currentQueue || null;
+  }
+
+  get currentClassTime(): ClassTime | null {
+    return FirebaseService.Instance.classTime?.data || null;
   }
 
   onAuthStateChanged(callback: (hasLogin: boolean) => void): AuthUnsubscribe {

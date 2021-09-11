@@ -1,5 +1,14 @@
-import React from "react";
-import { Button, ButtonGroup, makeStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  ButtonGroup,
+  FormControl,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  Select,
+  TextField,
+} from "@material-ui/core";
 import {
   Notifications,
   Help,
@@ -9,6 +18,11 @@ import {
   Create,
   Cancel,
 } from "@material-ui/icons";
+import FirebaseService from "../../services/FirebaseService";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const RSwal = withReactContent(Swal);
 
 export interface IActions {
   call: () => void;
@@ -27,6 +41,21 @@ const useStyles = makeStyles(() => ({
     gap: ".5em",
     placeItems: "center",
     justifyContent: "center",
+  },
+  dialogRoot: {
+    display: "flex",
+    flexDirection: "column",
+    placeItems: "center",
+    gap: ".5em",
+  },
+  pointSelect: {
+    width: "6em",
+  },
+  dialogActions: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "2em",
+    marginTop: "1em",
   },
 }));
 
@@ -89,9 +118,7 @@ function TAActions(props: { waiting?: number; actions: IActions }) {
         <Button
           startIcon={<Done />}
           color="primary"
-          onClick={() => {
-            props.actions.completeDemo(0); /** //FIXME: show dialog here */
-          }}
+          onClick={() => fireCompleteDemoDialog(props.actions)}
           disabled={!props.waiting || props.waiting === 0}
         >
           完成目前
@@ -100,7 +127,7 @@ function TAActions(props: { waiting?: number; actions: IActions }) {
           startIcon={<Create />}
           color="primary"
           onClick={() => {
-            props.actions.manualDemo("", 0); /** //FIXME: show dialog here */
+            fireCompleteDemoDialog(props.actions, true);
           }}
         >
           手動Demo
@@ -108,6 +135,101 @@ function TAActions(props: { waiting?: number; actions: IActions }) {
       </ButtonGroup>
     </div>
   );
+}
+
+function DemoDialog(props: {
+  manual: boolean;
+  id?: string;
+  maxPoints?: number;
+  actions: IActions;
+}) {
+  const classes = useStyles();
+  const [points, setPoints] = useState(0);
+  const [id, setId] = useState(props.id);
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setPoints(event.target.value as number);
+  };
+  const handleIdChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setId(event.target.value as string);
+  };
+
+  const submitPoints = () => {
+    if (props.manual) {
+      if (!id) return;
+      props.actions.manualDemo(id, points);
+    } else {
+      props.actions.completeDemo(points);
+    }
+    RSwal.clickConfirm();
+  };
+
+  return (
+    <div className={classes.dialogRoot}>
+      {props.manual ? (
+        <TextField
+          label="學號"
+          required
+          variant="filled"
+          onChange={handleIdChange}
+        />
+      ) : (
+        <h3>學號：{props.id}</h3>
+      )}
+      <FormControl variant="filled" required className={classes.pointSelect}>
+        <InputLabel id="number-label">題數</InputLabel>
+        <Select
+          labelId="number-label"
+          id="number-select"
+          value={points}
+          onChange={handleChange}
+        >
+          {[...Array((props.maxPoints || 0) + 1).keys()].map((p) => (
+            <MenuItem value={p} key={p}>
+              {p}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <div className={classes.dialogActions}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => RSwal.clickCancel()}
+        >
+          取消
+        </Button>
+        <Button variant="contained" color="primary" onClick={submitPoints}>
+          送出
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+async function fireCompleteDemoDialog(
+  actions: IActions,
+  manual: boolean = false
+) {
+  const id = FirebaseService.Instance.currentWaitingQueue?.queue[0].id;
+  const maxPoints = FirebaseService.Instance.currentClassTime?.maxPoints;
+
+  const res = await RSwal.fire({
+    title: manual ? "手動Demo" : "完成目前Demo",
+    html: (
+      <DemoDialog
+        manual={manual}
+        id={id}
+        maxPoints={maxPoints}
+        actions={actions}
+      />
+    ),
+    showConfirmButton: false,
+  });
+  if (res.isConfirmed)
+    await RSwal.fire({
+      title: "成功送出",
+      icon: "success",
+    });
 }
 
 export default function Actions(props: {
