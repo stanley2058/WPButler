@@ -1,5 +1,4 @@
 import { Timestamp } from "@firebase/firestore";
-import { QueueItem } from "../entities/ClassroomQueue";
 import ILayout, { LayoutUtils } from "../entities/Layout";
 import FirebaseService from "./FirebaseService";
 
@@ -8,7 +7,6 @@ export interface ClassroomState {
   studentInfo?: { id: string };
   sitting?: { row: number; col: number };
   rotation: number;
-  hasLogin?: boolean;
   waiting: {
     waiting: number;
     queue: number;
@@ -64,17 +62,17 @@ export default class ClassroomUtils {
     ClassroomUtils.guideDialogOpenStateListeners.push(callback);
   }
 
-  static getActions(state: ClassroomState) {
+  static getActions(state?: ClassroomState) {
     return {
       call: () => ClassroomUtils.call(state),
       cancelCall: () => ClassroomUtils.cancelCall(state),
-      completeDemo: () => ClassroomUtils.completeDemo(state),
-      manualDemo: () => ClassroomUtils.manualDemo(state),
+      completeDemo: ClassroomUtils.completeDemo,
+      manualDemo: ClassroomUtils.manualDemo,
     };
   }
 
-  static call(state: ClassroomState) {
-    if (!state.studentInfo || !state.sitting) return;
+  static call(state?: ClassroomState) {
+    if (!state || !state.studentInfo || !state.sitting) return;
     FirebaseService.Instance.enqueue({
       id: state.studentInfo.id,
       rotation: state.rotation,
@@ -82,10 +80,14 @@ export default class ClassroomUtils {
       appliedAt: Timestamp.now(),
     });
   }
-  static cancelCall(state: ClassroomState) {
-    if (!state.studentInfo) return;
+  static cancelCall(state?: ClassroomState) {
+    if (!state || !state.studentInfo) return;
     FirebaseService.Instance.dequeue(state.studentInfo.id);
   }
-  static completeDemo(state: ClassroomState) {}
-  static manualDemo(state: ClassroomState) {}
+  static completeDemo(points: number) {
+    FirebaseService.Instance.dequeueAndEnqueueResolved(points);
+  }
+  static manualDemo(id: string, points: number) {
+    FirebaseService.Instance.enqueueResolve(id, points);
+  }
 }

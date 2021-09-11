@@ -67,6 +67,56 @@ export class LayoutUtils {
     return rotated;
   }
 
+  static translateLocationToStandard(
+    standardLayout: ILayout,
+    rotation: number,
+    rotatedRow: number,
+    rotatedCol: number
+  ): { row: number; col: number } {
+    rotation %= 4;
+    let layout = LayoutUtils.layoutToRotation(standardLayout, rotation);
+    const rotateFunc =
+      rotation > 0
+        ? LayoutUtils.rotateCounterclockwise
+        : LayoutUtils.rotateClockwise;
+    const translateLocationFunc =
+      rotation > 0
+        ? LayoutUtils.translateLocationCounterclockwise
+        : LayoutUtils.translateLocationClockwise;
+    for (let i = 0; i < Math.abs(rotation); i++) {
+      const coordinates = translateLocationFunc(layout, rotatedRow, rotatedCol);
+      layout = rotateFunc(layout);
+      rotatedRow = coordinates.row;
+      rotatedCol = coordinates.col;
+    }
+    return { row: rotatedRow, col: rotatedCol };
+  }
+
+  static translateLocationToRotation(
+    standardLayout: ILayout,
+    rotation: number,
+    row: number,
+    col: number
+  ): { row: number; col: number } {
+    rotation %= 4;
+    let layout = standardLayout;
+    const rotateFunc =
+      rotation > 0
+        ? LayoutUtils.rotateClockwise
+        : LayoutUtils.rotateCounterclockwise;
+    const translateLocationFunc =
+      rotation > 0
+        ? LayoutUtils.translateLocationClockwise
+        : LayoutUtils.translateLocationCounterclockwise;
+    for (let i = 0; i < Math.abs(rotation); i++) {
+      const coordinates = translateLocationFunc(layout, row, col);
+      layout = rotateFunc(layout);
+      row = coordinates.row;
+      col = coordinates.col;
+    }
+    return { row, col };
+  }
+
   static translateLocationClockwise(
     oriLayout: ILayout,
     row: number,

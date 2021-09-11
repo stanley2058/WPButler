@@ -50,6 +50,7 @@ export default function ClassroomAction(props: {
         hasLogin={props.hasLogin}
         actions={props.actions}
         isInQueue={props.queue !== -1}
+        waiting={props.waiting}
       />
       <RotationControls onRotate={props.onRotate} />
     </div>

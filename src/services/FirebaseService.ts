@@ -12,6 +12,7 @@ import {
   onSnapshot,
   query,
   Timestamp,
+  Unsubscribe,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -49,6 +50,7 @@ export default class FirebaseService {
     isSessionAlive: boolean,
     classTime?: ClassTime
   ) => void)[] = [];
+  private currentQueue?: ClassroomQueue;
 
   private async queryDatabase() {
     const classTimeQ = query(
@@ -94,6 +96,9 @@ export default class FirebaseService {
         }
       );
     }
+    FirebaseService.Instance.onClassroomQueueChanged((classroomQueue) => {
+      FirebaseService.Instance.currentQueue = classroomQueue;
+    });
   }
 
   private isClassTimeValid(): boolean {
@@ -177,39 +182,49 @@ export default class FirebaseService {
   onAuthStateChanged(
     callback: (hasLogin: boolean) => void,
     activateOn: (hasLogin: boolean) => boolean
-  ) {
-    FirebaseService.Instance.auth.onAuthStateChanged(
+  ): Unsubscribe {
+    return FirebaseService.Instance.auth.onAuthStateChanged(
       (user) => activateOn(!!user) && callback(!!user)
     );
   }
 
-  async onClassTimeChanged(
+  onClassTimeChanged(
     onEmit: (isSessionAlive: boolean, classTime?: ClassTime) => void
-  ) {
-    await FirebaseService.Instance.isDataReady();
-    onEmit(
-      FirebaseService.Instance.isClassTimeValid(),
-      FirebaseService.Instance.classTime?.data
-    );
-    FirebaseService.Instance.classTimeChangedListeners.push(onEmit);
+  ): () => void {
+    (async () => {
+      await FirebaseService.Instance.isDataReady();
+      onEmit(
+        FirebaseService.Instance.isClassTimeValid(),
+        FirebaseService.Instance.classTime?.data
+      );
+      FirebaseService.Instance.classTimeChangedListeners.push(onEmit);
+    })();
+    return () => {
+      const onEmitRef = onEmit;
+      FirebaseService.Instance.classTimeChangedListeners =
+        FirebaseService.Instance.classTimeChangedListeners.filter(
+          (f) => f !== onEmitRef
+        );
+    };
   }
 
   async onClassroomQueueChanged(
     onEmit: (classroomQueue?: ClassroomQueue) => void
-  ) {
+  ): Promise<Unsubscribe | null> {
     await FirebaseService.Instance.isDataReady();
     const ref = FirebaseService.Instance.currentClassroomQueueRef;
     if (ref) {
-      onSnapshot(ref, (doc) => {
+      return onSnapshot(ref, (doc) => {
         if (doc.exists()) {
           const queue = doc.data() as ClassroomQueue;
           queue.queue.sort(
-            (a, b) => b.appliedAt.toMillis() - a.appliedAt.toMillis()
+            (a, b) => a.appliedAt.toMillis() - b.appliedAt.toMillis()
           );
           onEmit(queue);
         } else onEmit();
       });
     }
+    return null;
   }
 
   async enqueue(item: QueueItem) {
@@ -221,36 +236,41 @@ export default class FirebaseService {
   }
 
   async dequeue(id: string) {
-    const ref = FirebaseService.Instance.currentClassroomQueueRef;
-    if (!ref) return;
-    const res = ((await getDoc(ref)).data() as ClassroomQueue).queue.find(
+    if (!FirebaseService.Instance.currentQueue) return;
+    const res = FirebaseService.Instance.currentQueue.queue.find(
       (q) => q.id === id
     );
-    if (!res) return;
+    const ref = FirebaseService.Instance.currentClassroomQueueRef;
+    if (!ref || !res) return;
     await updateDoc(ref, {
       queue: arrayRemove(res),
     });
   }
 
-  async dequeueAndEnqueueResolved(item: QueueItem, points: number) {
+  async dequeueAndEnqueueResolved(points: number) {
+    if (!FirebaseService.Instance.currentQueue) return;
+    const res = FirebaseService.Instance.currentQueue.queue[0];
     const ref = FirebaseService.Instance.currentClassroomQueueRef;
-    if (!ref) return;
+    if (!ref || !res) return;
     await updateDoc(ref, {
-      queue: arrayRemove(item),
+      queue: arrayRemove(res),
       resolved: arrayUnion({
-        id: item.id,
+        id: res.id,
         points,
         resolvedAt: Timestamp.now(),
       }),
     });
   }
 
-  test() {
-    FirebaseService.Instance.onClassTimeChanged((isSessionValid, classTime) => {
-      console.log(isSessionValid, classTime);
-    });
-    FirebaseService.Instance.onClassroomQueueChanged((classroomQueue) => {
-      console.log(classroomQueue);
+  async enqueueResolve(id: string, points: number) {
+    const ref = FirebaseService.Instance.currentClassroomQueueRef;
+    if (!ref) return;
+    await updateDoc(ref, {
+      resolved: arrayUnion({
+        id,
+        points,
+        resolvedAt: Timestamp.now(),
+      }),
     });
   }
 }

@@ -16,8 +16,8 @@ export interface IActions {
   commonQuestions: () => void;
   thisWeekHomework: () => void;
   resetSeat: () => void;
-  completeDemo: () => void;
-  manualDemo: () => void;
+  completeDemo: (points: number) => void;
+  manualDemo: (id: string, points: number) => void;
 }
 
 const useStyles = makeStyles(() => ({
@@ -81,7 +81,7 @@ function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
   );
 }
 
-function TAActions(props: { actions: IActions }) {
+function TAActions(props: { waiting?: number; actions: IActions }) {
   const classes = useStyles();
   return (
     <div className={classes.action}>
@@ -89,14 +89,19 @@ function TAActions(props: { actions: IActions }) {
         <Button
           startIcon={<Done />}
           color="primary"
-          onClick={props.actions.completeDemo}
+          onClick={() => {
+            props.actions.completeDemo(0); /** //FIXME: show dialog here */
+          }}
+          disabled={!props.waiting || props.waiting === 0}
         >
           完成目前
         </Button>
         <Button
           startIcon={<Create />}
           color="primary"
-          onClick={props.actions.manualDemo}
+          onClick={() => {
+            props.actions.manualDemo("", 0); /** //FIXME: show dialog here */
+          }}
         >
           手動Demo
         </Button>
@@ -107,9 +112,11 @@ function TAActions(props: { actions: IActions }) {
 
 export default function Actions(props: {
   hasLogin?: boolean;
+  waiting?: number;
   isInQueue: boolean;
   actions: IActions;
 }) {
-  if (props.hasLogin) return <TAActions actions={props.actions} />;
+  if (props.hasLogin)
+    return <TAActions waiting={props.waiting} actions={props.actions} />;
   return <StudentActions isInQueue={props.isInQueue} actions={props.actions} />;
 }

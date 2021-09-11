@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Grid, makeStyles } from "@material-ui/core";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
@@ -29,6 +29,13 @@ export default function Classroom() {
     { name: INS203.id, layout: INS203 },
     { name: INS201.id, layout: INS201 },
   ];
+  const getCurrentStandardLayout = () => {
+    return (
+      layouts.find((l) => l.name === state.layout.id) || {
+        layout: INS203_201,
+      }
+    );
+  };
   const classes = useStyles();
   const history = useHistory();
   const [state, setState] = useState<ClassroomState>({
@@ -39,18 +46,11 @@ export default function Classroom() {
       queue: -1,
     },
   });
-  const [loaded, setLoaded] = useState(false);
-
-  const setAndSaveState = (newState: ClassroomState) => {
-    setState(newState);
-    localStorage.setItem("classroom", JSON.stringify(newState));
-  };
+  const [hasLogin, setLogin] = useState<boolean | undefined>(undefined);
+  const stateRef = useRef<ClassroomState>();
+  stateRef.current = state;
 
   useEffect(() => {
-    // testing
-    // FirebaseService.Instance.test();
-    // testing
-
     const classroomRaw = localStorage.getItem("classroom");
     if (classroomRaw) {
       const { layout, rotation, studentInfo, sitting } = JSON.parse(
@@ -62,61 +62,122 @@ export default function Classroom() {
       };
       setState({
         layout: LayoutUtils.layoutToRotation(rLayout.layout, rotation),
-        rotation,
+        rotation: rotation % 4,
         studentInfo,
         sitting,
         waiting: state.waiting,
       });
       ClassroomUtils.setGuideDialogOpenState(false);
     }
-  }, []);
 
-  useEffect(() => {
-    console.log(state);
-    if (loaded || !state.studentInfo) return;
-    FirebaseService.Instance.onClassroomQueueChanged((queue) => {
-      if (!queue) return;
-      const index = queue.queue.findIndex(
-        (q) => q.id === state.studentInfo?.id
-      );
-      setState({
-        ...state,
-        waiting: {
-          waiting: queue.queue.length,
-          queue: index,
-        },
-      });
-    });
-
-    FirebaseService.Instance.onAuthStateChanged(
-      (hasLogin) => {
-        setState({
-          ...state,
-          hasLogin,
-        });
-      },
-      () => state.hasLogin === undefined
+    const authUnSub = FirebaseService.Instance.onAuthStateChanged(
+      (hasLogin) => setLogin(hasLogin),
+      () => hasLogin === undefined
     );
 
     SeatSelectionService.Instance.register(
       "classroom-selection-listener",
-      (row: number, col: number) => {
-        setAndSaveState({ ...state, sitting: { row, col } });
+      onSeatSelection
+    );
+
+    return () => {
+      authUnSub();
+      SeatSelectionService.Instance.unregister("classroom-selection-listener");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (hasLogin === undefined) return;
+    const classTimeUnSub = FirebaseService.Instance.onClassTimeChanged(
+      (isSessionAlive, classTime) => {
+        if (!isSessionAlive) {
+          // TODO: prompt not alive and leave
+        } else {
+          if (classTime?.thisWeekHomeworkUrl && stateRef.current) {
+            setState({
+              ...stateRef.current,
+              thisWeekHomeworkUrl: classTime.thisWeekHomeworkUrl,
+            });
+          }
+        }
       }
     );
-    setLoaded(true);
-  }, [state]);
+    const classroomQueueUnSub =
+      FirebaseService.Instance.onClassroomQueueChanged((queue) => {
+        if (!queue || !stateRef.current) return;
+        const index = queue.queue.findIndex(
+          (q) => q.id === stateRef.current?.studentInfo?.id
+        );
+        let newState: ClassroomState = {
+          ...stateRef.current,
+          waiting: {
+            waiting: queue.queue.length,
+            queue: index,
+          },
+        };
 
+        if (hasLogin) {
+          if (queue.queue.length > 0) {
+            const { id, sitting, rotation } = queue.queue[0];
+            const { col, row } = LayoutUtils.translateLocationToStandard(
+              getCurrentStandardLayout().layout,
+              rotation,
+              sitting.row,
+              sitting.col
+            );
+
+            newState = {
+              ...newState,
+              studentInfo: {
+                id,
+              },
+              sitting: LayoutUtils.translateLocationToRotation(
+                getCurrentStandardLayout().layout,
+                stateRef.current.rotation,
+                row,
+                col
+              ),
+            };
+          } else {
+            newState = {
+              ...newState,
+              studentInfo: undefined,
+              sitting: undefined,
+            };
+          }
+        }
+        setState(newState);
+      });
+    return () => {
+      classTimeUnSub();
+      classroomQueueUnSub.then((unSub) => unSub && unSub());
+    };
+  }, [hasLogin]);
+
+  const setAndSaveState = (newState: ClassroomState) => {
+    setState(newState);
+    localStorage.setItem("classroom", JSON.stringify(newState));
+  };
+  const onSeatSelection = (row: number, col: number) => {
+    console.log("Test");
+    if (!stateRef.current) return;
+    setAndSaveState({ ...stateRef.current, sitting: { row, col } });
+  };
   const onGuideDialogClose = (id: string, rotation: number) => {
-    setAndSaveState(ClassroomUtils.onGuideDialogClose(state, id, rotation));
+    if (!stateRef.current) return;
+    setAndSaveState(
+      ClassroomUtils.onGuideDialogClose(stateRef.current, id, rotation)
+    );
   };
   const onRotate = (clockwise: boolean) => {
-    setAndSaveState(ClassroomUtils.onRotate(state, clockwise));
+    if (!stateRef.current) return;
+    setAndSaveState(ClassroomUtils.onRotate(stateRef.current, clockwise));
   };
   const actions = {
-    ...ClassroomUtils.getActions(state),
-    commonQuestions: () => history.push("/"),
-    thisWeekHomework: () => history.push(state.thisWeekHomeworkUrl || "/"),
+    ...ClassroomUtils.getActions(stateRef.current),
+    commonQuestions: () => history.push("/"), // TODO: finish this page
+    thisWeekHomework: () =>
+      window.open(stateRef.current?.thisWeekHomeworkUrl || "/"),
     resetSeat: () => {
       setAndSaveState({
         layout: INS203_201,
@@ -129,7 +190,7 @@ export default function Classroom() {
 
   return (
     <div className={classes.root}>
-      {!state.hasLogin && (
+      {!hasLogin && (
         <SeatGuideDialog
           open={!state.studentInfo}
           onClose={onGuideDialogClose}
@@ -140,7 +201,7 @@ export default function Classroom() {
           <ClassroomAction
             queue={state.waiting.queue}
             waiting={state.waiting.waiting}
-            hasLogin={state.hasLogin}
+            hasLogin={hasLogin}
             info={state.studentInfo}
             onRotate={onRotate}
             actions={actions}
@@ -150,7 +211,7 @@ export default function Classroom() {
           <ClassroomLayout
             layout={state.layout}
             sitting={state.sitting}
-            clickable={!state.hasLogin && state.waiting.queue === -1}
+            clickable={!hasLogin && state.waiting.queue === -1}
           />
         </Grid>
       </Grid>
