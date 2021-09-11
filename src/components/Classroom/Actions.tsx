@@ -210,7 +210,7 @@ async function fireCompleteDemoDialog(
   actions: IActions,
   manual: boolean = false
 ) {
-  const id = FirebaseService.Instance.currentWaitingQueue?.queue[0].id;
+  const id = FirebaseService.Instance.currentAvailableStudent?.id;
   const maxPoints = FirebaseService.Instance.currentClassTime?.maxPoints;
 
   const res = await RSwal.fire({

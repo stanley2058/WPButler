@@ -1,6 +1,12 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface ClassroomQueue {
+  occupied: [
+    {
+      studentId: string;
+      taId: string;
+    }
+  ];
   queue: QueueItem[];
   resolved: [
     {

@@ -187,6 +187,28 @@ export default class FirebaseService {
     return FirebaseService.Instance.classTime?.data || null;
   }
 
+  get currentAvailableStudent(): QueueItem | null {
+    const queue = FirebaseService.Instance.currentQueue;
+    const uid = FirebaseService.Instance.currentUser?.uid;
+    if (!queue || !uid) return null;
+
+    const currentOccupied = queue.occupied.find((i) => i.taId === uid);
+    if (currentOccupied) {
+      const currentStudent =
+        queue.queue.find((i) => i.id === currentOccupied.studentId) || null;
+      if (currentStudent) return currentStudent;
+      FirebaseService.Instance.release(currentOccupied.studentId);
+    }
+    queue.queue.sort((a, b) => a.appliedAt.toMillis() - b.appliedAt.toMillis());
+    const availableStudent = queue.queue.filter(
+      (i) => !queue.occupied.find((o) => o.studentId === i.id)
+    )[0];
+    if (availableStudent) {
+      FirebaseService.Instance.occupy(availableStudent.id);
+    }
+    return availableStudent || null;
+  }
+
   onAuthStateChanged(callback: (hasLogin: boolean) => void): AuthUnsubscribe {
     return FirebaseService.Instance.auth.onAuthStateChanged(
       (user) => callback(!!user),
@@ -246,24 +268,38 @@ export default class FirebaseService {
     const res = FirebaseService.Instance.currentQueue.queue.find(
       (q) => q.id === id
     );
+    const occupiedRes = FirebaseService.Instance.currentQueue.occupied.filter(
+      (i) => i.studentId === id
+    )[0];
     const ref = FirebaseService.Instance.currentClassroomQueueRef;
     if (!ref || !res) return;
-    await updateDoc(ref, {
+    let context: any = {
       queue: arrayRemove(res),
-    });
+    };
+    if (occupiedRes)
+      context = {
+        ...context,
+        occupied: arrayRemove(occupiedRes),
+      };
+    await updateDoc(ref, context);
   }
 
   async dequeueAndEnqueueResolved(points: number) {
     if (!FirebaseService.Instance.currentQueue) return;
-    const res = FirebaseService.Instance.currentQueue.queue[0];
+    const res = FirebaseService.Instance.currentAvailableStudent;
     const ref = FirebaseService.Instance.currentClassroomQueueRef;
-    if (!ref || !res) return;
+    if (!ref || !res || !FirebaseService.Instance.currentUser) return;
+
     await updateDoc(ref, {
       queue: arrayRemove(res),
       resolved: arrayUnion({
         id: res.id,
         points,
         resolvedAt: Timestamp.now(),
+      }),
+      occupied: arrayRemove({
+        studentId: res.id,
+        taId: FirebaseService.Instance.currentUser.uid,
       }),
     });
   }
@@ -276,6 +312,28 @@ export default class FirebaseService {
         id,
         points,
         resolvedAt: Timestamp.now(),
+      }),
+    });
+  }
+
+  async occupy(id: string) {
+    const ref = FirebaseService.Instance.currentClassroomQueueRef;
+    if (!ref || !FirebaseService.Instance.currentUser) return;
+    await updateDoc(ref, {
+      occupied: arrayUnion({
+        studentId: id,
+        taId: FirebaseService.Instance.currentUser.uid,
+      }),
+    });
+  }
+
+  async release(id: string) {
+    const ref = FirebaseService.Instance.currentClassroomQueueRef;
+    if (!ref || !FirebaseService.Instance.currentUser) return;
+    await updateDoc(ref, {
+      occupied: arrayRemove({
+        studentId: id,
+        taId: FirebaseService.Instance.currentUser.uid,
       }),
     });
   }

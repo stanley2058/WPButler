@@ -105,7 +105,8 @@ export default function Classroom() {
       }
     );
     const classroomQueueUnSub =
-      FirebaseService.Instance.onClassroomQueueChanged((queue) => {
+      FirebaseService.Instance.onClassroomQueueChanged(async (queue) => {
+        await FirebaseService.Instance.isDataReady();
         if (!queue || !stateRef.current) return;
         const index = queue.queue.findIndex(
           (q) => q.id === stateRef.current?.studentInfo?.id
@@ -119,8 +120,11 @@ export default function Classroom() {
         };
 
         if (hasLogin) {
-          if (queue.queue.length > 0) {
-            const { id, sitting, rotation } = queue.queue[0];
+          const currentAvailableStudent =
+            FirebaseService.Instance.currentAvailableStudent;
+          console.log(currentAvailableStudent);
+          if (currentAvailableStudent) {
+            const { id, sitting, rotation } = currentAvailableStudent;
             const { col, row } = LayoutUtils.translateLocationToStandard(
               getCurrentStandardLayout().layout,
               rotation,
@@ -153,6 +157,11 @@ export default function Classroom() {
     return () => {
       classTimeUnSub();
       classroomQueueUnSub.then((unSub) => unSub && unSub());
+
+      const currentStudent = FirebaseService.Instance.currentAvailableStudent;
+      if (currentStudent) {
+        FirebaseService.Instance.release(currentStudent.id);
+      }
     };
   }, [hasLogin]);
 
