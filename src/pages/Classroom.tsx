@@ -48,10 +48,22 @@ export default function Classroom() {
   });
   const [hasLogin, setLogin] = useState<boolean | undefined>(undefined);
   const stateRef = useRef<ClassroomState>();
+  const loginRef = useRef<boolean>();
   stateRef.current = state;
+  loginRef.current = hasLogin;
 
   useEffect(() => {
     const classroomRaw = localStorage.getItem("classroom");
+
+    const authUnSub = FirebaseService.Instance.onAuthStateChanged(
+      (auth) => loginRef.current !== auth && setLogin(auth)
+    );
+
+    SeatSelectionService.Instance.register(
+      "classroom-selection-listener",
+      onSeatSelection
+    );
+
     if (classroomRaw) {
       const { layout, rotation, studentInfo, sitting } = JSON.parse(
         classroomRaw
@@ -69,16 +81,6 @@ export default function Classroom() {
       });
       ClassroomUtils.setGuideDialogOpenState(false);
     }
-
-    const authUnSub = FirebaseService.Instance.onAuthStateChanged(
-      (hasLogin) => setLogin(hasLogin),
-      () => hasLogin === undefined
-    );
-
-    SeatSelectionService.Instance.register(
-      "classroom-selection-listener",
-      onSeatSelection
-    );
 
     return () => {
       authUnSub();

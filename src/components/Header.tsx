@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   AppBar,
@@ -32,15 +32,17 @@ export default function Header() {
   const [state, setState] = useState<{ open: boolean; hasLogin?: boolean }>({
     open: false,
   });
-  FirebaseService.Instance.onAuthStateChanged(
-    (hasLogin) => {
-      setState({
-        ...state,
-        hasLogin,
-      });
-    },
-    (hasLogin) => hasLogin !== state.hasLogin
-  );
+  useEffect(() => {
+    const unSub = FirebaseService.Instance.onAuthStateChanged((hasLogin) => {
+      if (hasLogin !== state.hasLogin) {
+        setState({
+          ...state,
+          hasLogin,
+        });
+      }
+    });
+    return unSub;
+  }, []);
 
   const entries = [
     {

@@ -6,13 +6,12 @@ import {
   doc,
   DocumentData,
   DocumentReference,
-  getDoc,
   getDocs,
   getFirestore,
   onSnapshot,
   query,
   Timestamp,
-  Unsubscribe,
+  Unsubscribe as FirestoreUnsubscribe,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -21,6 +20,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   User,
+  Unsubscribe as AuthUnsubscribe,
 } from "firebase/auth";
 import Config from "../../Config";
 import ClassTime from "../entities/ClassTime";
@@ -179,12 +179,10 @@ export default class FirebaseService {
     );
   }
 
-  onAuthStateChanged(
-    callback: (hasLogin: boolean) => void,
-    activateOn: (hasLogin: boolean) => boolean
-  ): Unsubscribe {
+  onAuthStateChanged(callback: (hasLogin: boolean) => void): AuthUnsubscribe {
     return FirebaseService.Instance.auth.onAuthStateChanged(
-      (user) => activateOn(!!user) && callback(!!user)
+      (user) => callback(!!user),
+      (error) => console.error(error)
     );
   }
 
@@ -210,7 +208,7 @@ export default class FirebaseService {
 
   async onClassroomQueueChanged(
     onEmit: (classroomQueue?: ClassroomQueue) => void
-  ): Promise<Unsubscribe | null> {
+  ): Promise<FirestoreUnsubscribe | null> {
     await FirebaseService.Instance.isDataReady();
     const ref = FirebaseService.Instance.currentClassroomQueueRef;
     if (ref) {
