@@ -1,14 +1,34 @@
 # Web Programming Butler
 
-> WP Butler is a project developed for web programming class' demo usage.
+> WP Butler is a project developed for the web programming class.
 
 ## Development
 
-Using: Vite (react-ts)
+### Setup Firebase Credentials
+
+1. Follow Firebase setup steps and retain the credentials.
+2. Create `Config.ts` besides `IConfig.ts`, paste in the following template and fill in the fields retained from Firebase.
+
+```typescript
+import IConfig from "./IConfig";
+
+const Config: IConfig = {
+  firebaseConfig: {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: "",
+  },
+};
+export default Config;
+```
 
 ### Dev server
 
-This will start a vite dev server.
+This will start a Vite dev server.
 
 ```
 npm run dev
