@@ -57,7 +57,7 @@ export default function SeatGuideDialog(props: {
       title: "選擇座位",
       text: "點選教室平面圖上面的座位來設定目前的位子。",
     });
-    props.onClose(state.id, state.isLeft ? 2 : 0);
+    props.onClose(state.id, state.isLeft ? 0 : 2);
   };
   const chooseTeacherPosition = (isLeft: boolean) => {
     setState({

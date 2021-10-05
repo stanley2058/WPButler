@@ -186,7 +186,8 @@ export default function Classroom() {
   };
   const actions = {
     ...ClassroomUtils.getActions(stateRef.current),
-    commonQuestions: () => history.push("/"), // TODO: finish this page
+    commonQuestions: () =>
+      window.open("https://hackmd.io/@stanley2058/HJm6o4xEF", "_blank"),
     thisWeekHomework: () =>
       window.open(stateRef.current?.thisWeekHomeworkUrl || "/"),
     resetSeat: () => {

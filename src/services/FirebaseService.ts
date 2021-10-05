@@ -1,15 +1,20 @@
 import { initializeApp } from "firebase/app";
 import {
+  addDoc,
   arrayRemove,
   arrayUnion,
   collection,
   doc,
   DocumentData,
   DocumentReference,
+  DocumentSnapshot,
+  getDoc,
   getDocs,
   getFirestore,
   onSnapshot,
   query,
+  QuerySnapshot,
+  setDoc,
   Timestamp,
   Unsubscribe as FirestoreUnsubscribe,
   updateDoc,
@@ -336,5 +341,41 @@ export default class FirebaseService {
         taId: FirebaseService.Instance.currentUser.uid,
       }),
     });
+  }
+
+  async getAllClassTime(): Promise<QuerySnapshot<DocumentData>> {
+    return await getDocs(collection(FirebaseService.Instance.db, "class-time"));
+  }
+
+  async getClassroomQueueById(
+    id: string
+  ): Promise<DocumentSnapshot<DocumentData>> {
+    return await getDoc(
+      doc(FirebaseService.Instance.db, "classroom-queue", id)
+    );
+  }
+
+  async createNewClassSession(
+    startTime: Date,
+    endTime: Date,
+    maxPoints: number
+  ) {
+    const docRef = await addDoc(
+      collection(FirebaseService.Instance.db, "class-time"),
+      {
+        start: Timestamp.fromDate(startTime),
+        end: Timestamp.fromDate(endTime),
+        maxPoints,
+        thisWeekHomeworkUrl: "",
+      } as ClassTime
+    );
+    await setDoc(
+      doc(FirebaseService.Instance.db, "classroom-queue", docRef.id),
+      {
+        occupied: [],
+        queue: [],
+        resolved: [],
+      }
+    );
   }
 }

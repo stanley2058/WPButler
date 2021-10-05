@@ -6,29 +6,30 @@ const INS203_201: ILayout = {
   id: "INS203_201",
   name: "電腦教室 (203_201)",
   scenes: {
-    top: [
-      { element: <Door />, width: 1 },
-      { element: <Window />, width: true },
-      { element: <Door />, width: 1 },
-      { element: <Door />, width: 1 },
-      { element: <Window />, width: true },
-    ],
-    left: [{ element: <WhiteBoard />, width: true }],
-    right: [
+    top: [{ element: <Window />, width: true }],
+    left: [
       { element: <Teacher />, width: 2 },
       { element: <WhiteBoard />, width: true },
     ],
-    bottom: [{ element: <Window />, width: true }],
+    right: [{ element: <WhiteBoard />, width: true }],
+    bottom: [
+      { element: <Door />, width: 1 },
+      { element: <Window />, width: true },
+      { element: <Door />, width: 1 },
+      { element: <Door />, width: 1 },
+      { element: <Window />, width: true },
+      { element: <Door />, width: 1 },
+    ],
   },
   seats: [
-    [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ],
 };
 
