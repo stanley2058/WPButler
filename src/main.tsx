@@ -11,24 +11,22 @@ import Header from "./components/Header";
 
 ReactDOM.render(
   <Router>
-    <div>
-      <Header />
-      <Route exact path="/">
-        <Home />
-      </Route>
-      <Route path="/classroom">
-        <Classroom />
-      </Route>
-      <Route path="/settings">
-        <Settings />
-      </Route>
-      <Route path="/about">
-        <About />
-      </Route>
-      <Route path="/login">
-        <Login />
-      </Route>
-    </div>
+    <Header />
+    <Route exact path="/">
+      <Home />
+    </Route>
+    <Route path="/classroom">
+      <Classroom />
+    </Route>
+    <Route path="/settings">
+      <Settings />
+    </Route>
+    <Route path="/about">
+      <About />
+    </Route>
+    <Route path="/login">
+      <Login />
+    </Route>
   </Router>,
   document.getElementById("root")
 );

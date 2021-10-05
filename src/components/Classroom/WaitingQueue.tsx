@@ -1,6 +1,7 @@
 import React from "react";
-import { makeStyles, Tooltip, Badge } from "@material-ui/core";
-import { EmojiPeople, People } from "@material-ui/icons";
+import { Tooltip, Badge } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { EmojiPeople, People } from "@mui/icons-material";
 
 const useStyles = makeStyles(() => ({
   icons: {
@@ -38,7 +39,7 @@ export default function WaitingQueue(props: {
             >
               <EmojiPeople
                 fontSize="large"
-                color="primary"
+                color="secondary"
                 className={classes.icons}
               />
             </Badge>
@@ -54,7 +55,7 @@ export default function WaitingQueue(props: {
           >
             <People
               fontSize="large"
-              color="primary"
+              color="secondary"
               className={classes.icons}
             />
           </Badge>

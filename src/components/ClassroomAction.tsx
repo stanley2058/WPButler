@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import Actions, { IActions } from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";

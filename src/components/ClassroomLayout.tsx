@@ -1,12 +1,12 @@
 import React from "react";
 import ILayout from "../entities/Layout";
-import { makeStyles, Theme, createStyles } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
+import { makeStyles, createStyles, styled } from "@mui/styles";
+import { Grid } from "@mui/material";
 import Seat from "../entities/classroom-objects/Seat";
 import Space from "../entities/classroom-objects/Space";
 import SelectedSeat from "../entities/classroom-objects/SelectedSeat";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       textAlign: "center",
@@ -28,17 +28,17 @@ const useStyles = makeStyles((theme: Theme) =>
     seatRow: {
       width: "100%",
       display: "flex",
-      flexDirection: "row",
       justifyContent: "space-evenly",
     },
   })
 );
+
 export default function ClassroomLayout(props: {
   layout: ILayout;
   sitting?: { row: number; col: number };
   clickable?: boolean;
 }) {
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   return (
     <div className={classes.root}>
@@ -72,7 +72,11 @@ export default function ClassroomLayout(props: {
         </Grid>
 
         <Grid item xs>
-          <Grid container className={classes.seatBase}>
+          <Grid
+            container
+            className={classes.seatBase}
+            sx={{ flexDirection: "column" }}
+          >
             {props.layout.seats.map((row, id) => (
               <Grid item xs key={"row-" + id} className={classes.seatRow}>
                 {row.map((s, sid) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { createStyles, makeStyles } from "@mui/styles";
 import {
   Grid,
   Card,
@@ -8,10 +8,10 @@ import {
   Typography,
   Button,
   ButtonGroup,
-} from "@material-ui/core";
-import { School, Class, Info } from "@material-ui/icons";
+} from "@mui/material";
+import { School, Class, Info } from "@mui/icons-material";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       display: "flex",
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: "60em",
     },
     card: {
-      padding: theme.spacing(1),
+      padding: "1em",
       textAlign: "center",
     },
   })

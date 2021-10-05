@@ -3,10 +3,10 @@ import {
   Button,
   Card,
   CardContent,
-  makeStyles,
   Typography,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import FirebaseService from "../services/FirebaseService";
 import { useHistory } from "react-router-dom";
 import Swal from "sweetalert2";

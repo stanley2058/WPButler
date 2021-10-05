@@ -1,6 +1,7 @@
 import React from "react";
-import { IconButton, makeStyles, Tooltip } from "@material-ui/core";
-import { RotateLeft, RotateRight } from "@material-ui/icons";
+import { IconButton, Tooltip } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { RotateLeft, RotateRight } from "@mui/icons-material";
 
 const useStyles = makeStyles(() => ({
   rotateControl: {
@@ -21,7 +22,7 @@ export default function RotationControls(props: {
           onClick={() => {
             props.onRotate(false);
           }}
-          color="primary"
+          color="secondary"
           aria-label="rotate counterclockwise"
         >
           <RotateLeft fontSize="large" />
@@ -33,7 +34,7 @@ export default function RotationControls(props: {
           onClick={() => {
             props.onRotate(true);
           }}
-          color="primary"
+          color="secondary"
           aria-label="rotate clockwise"
         >
           <RotateRight fontSize="large" />

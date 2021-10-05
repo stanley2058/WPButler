@@ -1,6 +1,7 @@
 import React from "react";
-import { makeStyles, Tooltip } from "@material-ui/core";
-import { EventSeat } from "@material-ui/icons";
+import { Tooltip } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { EventSeat } from "@mui/icons-material";
 import SeatSelectionService from "../../services/SeatSelectionService";
 
 const useStyles = makeStyles(() => ({
@@ -14,7 +15,7 @@ export default function Seat(props: {
   clickable?: boolean;
 }) {
   const classes = useStyles();
-  if (!props.clickable) return <EventSeat color="secondary" />;
+  if (!props.clickable) return <EventSeat color="action" />;
   return (
     <a
       className={classes.root}
@@ -23,7 +24,7 @@ export default function Seat(props: {
       }}
     >
       <Tooltip title="移動到這裡">
-        <EventSeat color="secondary" />
+        <EventSeat color="action" />
       </Tooltip>
     </a>
   );

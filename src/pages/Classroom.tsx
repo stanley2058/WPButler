@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, makeStyles } from "@material-ui/core";
+import { Grid } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
 import { INS201, INS203, INS203_201 } from "../entities/layouts";
@@ -122,7 +123,6 @@ export default function Classroom() {
         if (hasLogin) {
           const currentAvailableStudent =
             FirebaseService.Instance.currentAvailableStudent;
-          console.log(currentAvailableStudent);
           if (currentAvailableStudent) {
             const { id, sitting, rotation } = currentAvailableStudent;
             const { col, row } = LayoutUtils.translateLocationToStandard(
@@ -170,7 +170,6 @@ export default function Classroom() {
     localStorage.setItem("classroom", JSON.stringify(newState));
   };
   const onSeatSelection = (row: number, col: number) => {
-    console.log("Test");
     if (!stateRef.current) return;
     setAndSaveState({ ...stateRef.current, sitting: { row, col } });
   };

@@ -1,5 +1,5 @@
 import React from "react";
-import { EventSeat } from "@material-ui/icons";
+import { EventSeat } from "@mui/icons-material";
 
 export default function Space() {
   return (

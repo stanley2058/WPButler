@@ -11,15 +11,15 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
-} from "@material-ui/core";
-import { Class, Info, Settings, ExitToApp } from "@material-ui/icons";
-import MenuIcon from "@material-ui/icons/Menu";
-import { makeStyles } from "@material-ui/core/styles";
+} from "@mui/material";
+import { Class, Info, Settings, ExitToApp } from "@mui/icons-material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { makeStyles } from "@mui/styles";
 import FirebaseService from "../services/FirebaseService";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: { flexGrow: 1 },
-  menuButton: { marginRight: theme.spacing(2) },
+  menuButton: { marginRight: "1em" },
   title: {
     cursor: "pointer",
   },

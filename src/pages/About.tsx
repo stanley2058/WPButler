@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import {
   Grid,
   Card,
@@ -9,7 +9,7 @@ import {
   Typography,
   ImageList,
   ImageListItem,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   ReactJs,
   Vite,
@@ -19,7 +19,7 @@ import {
   Googlefonts,
   Firebase,
 } from "@icons-pack/react-simple-icons";
-import { Mail } from "@material-ui/icons";
+import { Mail } from "@mui/icons-material";
 
 const useStyles = makeStyles({
   root: {

@@ -1,6 +1,7 @@
 import React from "react";
-import { makeStyles, Tooltip } from "@material-ui/core";
-import { PersonPin } from "@material-ui/icons";
+import { Tooltip } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { PersonPin } from "@mui/icons-material";
 
 const useStyles = makeStyles(() => ({
   root: {

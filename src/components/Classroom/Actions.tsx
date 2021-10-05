@@ -4,11 +4,11 @@ import {
   ButtonGroup,
   FormControl,
   InputLabel,
-  makeStyles,
   MenuItem,
   Select,
+  SelectChangeEvent,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   Notifications,
   Help,
@@ -17,7 +17,8 @@ import {
   Done,
   Create,
   Cancel,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import { makeStyles } from "@mui/styles";
 import FirebaseService from "../../services/FirebaseService";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -67,7 +68,7 @@ function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
         {props.isInQueue ? (
           <Button
             startIcon={<Cancel />}
-            color="secondary"
+            color="success"
             onClick={props.actions.cancelCall}
           >
             取消呼叫
@@ -75,7 +76,7 @@ function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
         ) : (
           <Button
             startIcon={<Notifications />}
-            color="primary"
+            color="secondary"
             onClick={props.actions.call}
           >
             呼叫助教
@@ -99,7 +100,7 @@ function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
         </Button>
         <Button
           startIcon={<Replay />}
-          color="secondary"
+          color="error"
           onClick={props.actions.resetSeat}
           disabled={props.isInQueue}
         >
@@ -146,11 +147,11 @@ function DemoDialog(props: {
   const classes = useStyles();
   const [points, setPoints] = useState(0);
   const [id, setId] = useState(props.id);
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setPoints(event.target.value as number);
+  const handleChange = (event: SelectChangeEvent) => {
+    setPoints(parseInt(event.target.value));
   };
-  const handleIdChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setId(event.target.value as string);
+  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setId(event.target.value);
   };
 
   const submitPoints = () => {
@@ -180,7 +181,7 @@ function DemoDialog(props: {
         <Select
           labelId="number-label"
           id="number-select"
-          value={points}
+          value={points.toString()}
           onChange={handleChange}
         >
           {[...Array((props.maxPoints || 0) + 1).keys()].map((p) => (

@@ -8,10 +8,10 @@ import {
   DialogTitle,
   List,
   ListItem,
-  makeStyles,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Swal from "sweetalert2";
 import ClassroomUtils from "../services/ClassroomUtils";
 
@@ -72,7 +72,7 @@ export default function SeatGuideDialog(props: {
   };
   const getColor = (isLeft: boolean) => {
     if (state.isLeft === isLeft) return "primary";
-    return "default";
+    return "inherit";
   };
   const onIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const id = event.target.value.trim();
