@@ -4,6 +4,7 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   DocumentData,
   DocumentReference,
@@ -377,5 +378,10 @@ export default class FirebaseService {
         resolved: [],
       }
     );
+  }
+
+  async deleteClassSession(id: string) {
+    await deleteDoc(doc(FirebaseService.Instance.db, "class-time", id));
+    await deleteDoc(doc(FirebaseService.Instance.db, "classroom-queue", id));
   }
 }

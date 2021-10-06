@@ -10,6 +10,7 @@ import { makeStyles } from "@mui/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FirebaseService from "../services/FirebaseService";
 import ClassSessionCreator from "../components/Settings/ClassSessionCreator";
+import GradeSum from "../components/Settings/GradeSum";
 
 const useStyles = makeStyles({
   root: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles({
   accordionBase: {
     marginLeft: "1em",
     marginRight: "1em",
-    maxWidth: "40em",
+    maxWidth: "30em",
   },
   accordionTitle: {
     fontSize: ".9em",
@@ -71,15 +72,12 @@ export default function Settings() {
       <div className={classes.accordionBase}>
         <Typography variant="h6">課程相關</Typography>
 
-        <CustomAccordion title="新增課程">
+        <CustomAccordion title="編輯課程">
           <ClassSessionCreator />
         </CustomAccordion>
 
         <CustomAccordion title="成績統計">
-          <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </Typography>
+          <GradeSum />
         </CustomAccordion>
 
         <Typography sx={{ marginTop: "2em" }} variant="h6">
