@@ -356,7 +356,8 @@ export default class FirebaseService {
   async createNewClassSession(
     startTime: Date,
     endTime: Date,
-    maxPoints: number
+    maxPoints: number,
+    thisWeekHomeworkUrl: string
   ) {
     const docRef = await addDoc(
       collection(FirebaseService.Instance.db, "class-time"),
@@ -364,7 +365,7 @@ export default class FirebaseService {
         start: Timestamp.fromDate(startTime),
         end: Timestamp.fromDate(endTime),
         maxPoints,
-        thisWeekHomeworkUrl: "",
+        thisWeekHomeworkUrl,
       } as ClassTime
     );
     await setDoc(

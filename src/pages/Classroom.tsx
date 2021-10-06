@@ -10,6 +10,7 @@ import SeatGuideDialog from "../components/SeatGuideDialog";
 import ClassroomUtils, { ClassroomState } from "../services/ClassroomUtils";
 import { useHistory } from "react-router-dom";
 import { LayoutUtils } from "../entities/Layout";
+import Swal from "sweetalert2";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -25,6 +26,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Classroom() {
+  const classes = useStyles();
+  const history = useHistory();
+
   const layouts = [
     { name: INS203_201.id, layout: INS203_201 },
     { name: INS203.id, layout: INS203 },
@@ -37,8 +41,7 @@ export default function Classroom() {
       }
     );
   };
-  const classes = useStyles();
-  const history = useHistory();
+
   const [state, setState] = useState<ClassroomState>({
     layout: INS203_201,
     rotation: 0,
@@ -94,7 +97,28 @@ export default function Classroom() {
     const classTimeUnSub = FirebaseService.Instance.onClassTimeChanged(
       (isSessionAlive, classTime) => {
         if (!isSessionAlive && !hasLogin) {
-          // TODO: prompt not alive and leave
+          if (stateRef.current?.waiting.queue !== -1) {
+            Swal.fire({
+              icon: "info",
+              title: "課程時間已結束",
+              text: "Demo尚在等待佇列中，在完成Demo前請勿關閉本頁。",
+              allowOutsideClick: false,
+              confirmButtonColor: "red",
+              confirmButtonText: "離開佇列",
+            }).then(() => {
+              if (stateRef.current?.studentInfo?.id)
+                FirebaseService.Instance.dequeue(
+                  stateRef.current.studentInfo.id
+                );
+              history.push("/");
+            });
+          } else {
+            Swal.fire({
+              icon: "info",
+              title: "課程時間已結束",
+              text: "請將作業保存帶走，並在離開教室前關閉電腦。",
+            }).then(() => history.push("/"));
+          }
         } else {
           if (classTime?.thisWeekHomeworkUrl && stateRef.current) {
             setState({

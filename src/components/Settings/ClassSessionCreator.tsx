@@ -32,6 +32,9 @@ export default function ClassSessionCreator() {
   const [startTime, setStartTime] = useState("14:00");
   const [endTime, setEndTime] = useState("17:00");
   const [amount, setAmount] = useState(2);
+  const [homeworkUri, setHomeworkUri] = useState(
+    "https://tronclass.ntou.edu.tw/"
+  );
   const [classTimeList, setClassTimeList] = useState<
     { time: ClassTime; id: string }[]
   >([]);
@@ -52,13 +55,18 @@ export default function ClassSessionCreator() {
       `${classDate.toISOString().split("T")[0]}T${startTime}`
     );
     const end = new Date(`${classDate.toISOString().split("T")[0]}T${endTime}`);
-    await FirebaseService.Instance.createNewClassSession(start, end, amount);
+    await FirebaseService.Instance.createNewClassSession(
+      start,
+      end,
+      amount,
+      homeworkUri
+    );
     await Swal.fire({
       icon: "success",
       title: "課程編輯",
       text: "課程建立成功！",
     });
-    await getTime();
+    location.reload();
   };
 
   const deleteClass = async (id: string) => {
@@ -125,6 +133,16 @@ export default function ClassSessionCreator() {
           onChange={(amount: ChangeEvent<HTMLInputElement>) =>
             setAmount(parseInt(amount.target.value))
           }
+        />
+        <TextField
+          required
+          label="作業連結"
+          type="url"
+          value={homeworkUri}
+          onChange={(e) => setHomeworkUri(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
         <Button variant="contained" color="primary" type="submit">
           新增

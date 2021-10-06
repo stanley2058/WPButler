@@ -2,13 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/favicon.svg" />
+    <meta name="theme-color" content="#1976d2" />
+    <link rel="icon" href="/src/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>WP Butler</title>
+    <meta name="description" content="Web Programming Butler" />
+    <script defer src="registerSW.js"></script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript
+      >Please enable JavaScript to continue using this application.</noscript
+    >
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

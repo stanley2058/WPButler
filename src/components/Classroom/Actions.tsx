@@ -126,7 +126,7 @@ function TAActions(props: { waiting?: number; actions: IActions }) {
         </Button>
         <Button
           startIcon={<Create />}
-          color="primary"
+          color="secondary"
           onClick={() => {
             fireCompleteDemoDialog(props.actions, true);
           }}
@@ -194,7 +194,7 @@ function DemoDialog(props: {
       <div className={classes.dialogActions}>
         <Button
           variant="contained"
-          color="secondary"
+          color="info"
           onClick={() => RSwal.clickCancel()}
         >
           取消
