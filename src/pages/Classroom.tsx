@@ -113,6 +113,7 @@ export default function Classroom() {
               history.push("/");
             });
           } else {
+            ClassroomUtils.setGuideDialogOpenState(false);
             Swal.fire({
               icon: "info",
               title: "課程時間已結束",
