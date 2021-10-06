@@ -27,6 +27,7 @@ import {
   signInWithEmailAndPassword,
   User,
   Unsubscribe as AuthUnsubscribe,
+  updatePassword,
 } from "firebase/auth";
 import Config from "../../Config";
 import ClassTime from "../entities/ClassTime";
@@ -139,21 +140,12 @@ export default class FirebaseService {
     });
   }
 
-  async createAccount(
-    email: string,
-    password: string = "soselab401"
-  ): Promise<boolean> {
-    try {
-      await createUserWithEmailAndPassword(
-        FirebaseService.Instance.auth,
-        email,
-        password
-      );
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-    return true;
+  async createAccount(email: string, password: string = "soselab401") {
+    await createUserWithEmailAndPassword(
+      FirebaseService.Instance.auth,
+      email,
+      password
+    );
   }
 
   async signIn(email: string, password: string): Promise<User | null> {
@@ -173,6 +165,11 @@ export default class FirebaseService {
 
   async signOut() {
     await FirebaseService.Instance.auth.signOut();
+  }
+
+  async changePassword(newPasswd: string) {
+    if (!FirebaseService.Instance.currentUser) return;
+    await updatePassword(FirebaseService.Instance.currentUser, newPasswd);
   }
 
   get currentUser(): User | null {
