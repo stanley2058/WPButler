@@ -58,7 +58,12 @@ export default function GradeSum() {
       map[record.id] += record.points;
       if (map[record.id] > maxPoints) map[record.id] = maxPoints;
     });
-    setStudentRecords(Object.keys(map).map((k) => ({ id: k, points: map[k] })));
+    setStudentRecords(
+      Object.keys(map)
+        .map((k) => ({ id: k, points: map[k] }))
+        .filter((r) => r.points > 0)
+        .sort((a, b) => a.id.localeCompare(b.id))
+    );
   };
 
   useEffect(() => {
