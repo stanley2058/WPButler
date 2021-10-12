@@ -107,6 +107,19 @@ export default class FirebaseService {
     }
     FirebaseService.Instance.onClassroomQueueChanged((classroomQueue) => {
       FirebaseService.Instance.currentQueue = classroomQueue;
+      if (classroomQueue) {
+        const taId = FirebaseService.Instance.currentUser?.uid;
+        if (!taId) return;
+        const myStudent = classroomQueue.occupied.find((s) => s.taId === taId);
+        if (!myStudent) return;
+        const occupied = classroomQueue.occupied.filter(
+          (s) => s.studentId === myStudent.studentId
+        );
+        occupied.sort((a, b) => a.taId.localeCompare(b.taId));
+        if (occupied.length > 1 && occupied[0].taId !== taId) {
+          FirebaseService.Instance.release(myStudent.studentId);
+        }
+      }
     });
   }
 
