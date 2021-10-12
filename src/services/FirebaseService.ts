@@ -51,7 +51,7 @@ export default class FirebaseService {
   private auth;
   private db;
 
-  private previousSessionState: boolean = false;
+  private previousSessionState?: boolean = undefined;
   private classTime?: { id: string; data: ClassTime } | null;
   private classTimeChangedListeners: ((
     isSessionAlive: boolean,
@@ -65,13 +65,15 @@ export default class FirebaseService {
       where("end", ">=", Timestamp.now())
     );
     const classTimeQR = await getDocs(classTimeQ);
-    if (classTimeQR.empty) FirebaseService.Instance.classTime = null;
+
     classTimeQR.forEach((doc) => {
       const data = doc.data() as ClassTime;
       if (data.start.toMillis() <= Timestamp.now().toMillis()) {
         FirebaseService.Instance.classTime = { id: doc.id, data };
       }
     });
+    if (!FirebaseService.Instance.classTime)
+      FirebaseService.Instance.classTime = null;
   }
 
   private async startTimer() {
