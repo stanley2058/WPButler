@@ -93,6 +93,7 @@ export default function ClassroomLayout(props: {
                     <Seat
                       row={id}
                       col={sid}
+                      color={s}
                       clickable={props.clickable}
                       key={sid}
                     />

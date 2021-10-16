@@ -12,10 +12,15 @@ const useStyles = makeStyles(() => ({
 export default function Seat(props: {
   row: number;
   col: number;
+  color: number;
   clickable?: boolean;
 }) {
   const classes = useStyles();
-  if (!props.clickable) return <EventSeat color="action" />;
+  const displayColor = props.color === 1 ? "action" : "info";
+  const tooltipText =
+    props.color === 1 ? "移動到這裡" : "移動到這裡 (橫向座位)";
+
+  if (!props.clickable) return <EventSeat color={displayColor} />;
   return (
     <a
       className={classes.root}
@@ -23,8 +28,8 @@ export default function Seat(props: {
         SeatSelectionService.Instance.emitSelection(props.row, props.col);
       }}
     >
-      <Tooltip title="移動到這裡">
-        <EventSeat color="action" />
+      <Tooltip title={tooltipText}>
+        <EventSeat color={displayColor} />
       </Tooltip>
     </a>
   );
