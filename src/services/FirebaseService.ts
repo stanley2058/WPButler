@@ -391,10 +391,35 @@ export default class FirebaseService {
         resolved: [],
       }
     );
+    await setDoc(doc(FirebaseService.Instance.db, "seats", docRef.id), {
+      classTime: Timestamp.fromDate(startTime),
+      sittingRecords: [],
+    });
   }
 
   async deleteClassSession(id: string) {
     await deleteDoc(doc(FirebaseService.Instance.db, "class-time", id));
     await deleteDoc(doc(FirebaseService.Instance.db, "classroom-queue", id));
+    await deleteDoc(doc(FirebaseService.Instance.db, "seats", id));
+  }
+
+  async getSeatRecordList() {
+    return await getDocs(collection(FirebaseService.Instance.db, "seats"));
+  }
+
+  async acquireSeat(id: string, rotation: number, row: number, col: number) {
+    const docId = FirebaseService.Instance.classTime?.id;
+    if (!docId) return;
+    await updateDoc(doc(FirebaseService.Instance.db, "seats", docId), {
+      sittingRecords: arrayUnion({
+        createAt: Timestamp.now(),
+        id,
+        rotation,
+        sitting: {
+          row,
+          col,
+        },
+      }),
+    });
   }
 }

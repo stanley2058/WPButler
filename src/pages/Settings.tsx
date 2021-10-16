@@ -12,6 +12,7 @@ import FirebaseService from "../services/FirebaseService";
 import ClassSessionCreator from "../components/Settings/ClassSessionCreator";
 import GradeSum from "../components/Settings/GradeSum";
 import TASettings from "../components/Settings/TASettings";
+import SeatRecord from "../components/Settings/SeatRecord";
 
 const useStyles = makeStyles({
   root: {
@@ -84,6 +85,10 @@ export default function Settings() {
 
         <CustomAccordion title="成績統計">
           <GradeSum />
+        </CustomAccordion>
+
+        <CustomAccordion title="座位記錄">
+          <SeatRecord />
         </CustomAccordion>
 
         <Typography sx={{ marginTop: "2em" }} variant="h6">

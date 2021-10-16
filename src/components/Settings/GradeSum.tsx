@@ -10,7 +10,6 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     gap: "1em",
-    maxWidth: "15em",
   },
   table: {
     display: "flex",

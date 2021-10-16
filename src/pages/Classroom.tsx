@@ -195,8 +195,11 @@ export default function Classroom() {
     localStorage.setItem("classroom", JSON.stringify(newState));
   };
   const onSeatSelection = (row: number, col: number) => {
-    if (!stateRef.current) return;
+    const id = stateRef.current?.studentInfo?.id;
+    if (!stateRef.current || !id) return;
+    const rotation = stateRef.current.rotation;
     setAndSaveState({ ...stateRef.current, sitting: { row, col } });
+    FirebaseService.Instance.acquireSeat(id, rotation, row, col);
   };
   const onGuideDialogClose = (id: string, rotation: number) => {
     if (!stateRef.current) return;
