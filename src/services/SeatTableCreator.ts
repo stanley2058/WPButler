@@ -15,7 +15,7 @@ export default class SeatTableCreator {
     const layout = INS203_201;
     const rowCount = layout.seats.length;
     const colCount = layout.seats[0].length;
-    const mapped = record.sittingRecords.map((r) => ({
+    let mapped = record.sittingRecords.map((r) => ({
       ...r,
       rotation: 0,
       sitting: {
@@ -27,8 +27,19 @@ export default class SeatTableCreator {
         ),
       },
     }));
-    console.log(layout);
-    console.log(mapped);
+
+    const studentTimeMapping: any = {};
+    mapped.forEach((r) => {
+      if (
+        studentTimeMapping[r.id] &&
+        studentTimeMapping[r.id] > r.createAt.toMillis()
+      )
+        return;
+      studentTimeMapping[r.id] = r.createAt.toMillis();
+    });
+    mapped = mapped.filter(
+      (r) => r.createAt.toMillis() === studentTimeMapping[r.id]
+    );
 
     const table: { id: string; time: number }[][] = [];
     for (let i = 0; i < rowCount; i++) table.push([]);
