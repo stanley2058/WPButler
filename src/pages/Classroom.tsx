@@ -84,6 +84,14 @@ export default function Classroom() {
         waiting: state.waiting,
       });
       ClassroomUtils.setGuideDialogOpenState(false);
+      if (studentInfo && sitting) {
+        FirebaseService.Instance.acquireSeat(
+          studentInfo.id,
+          rotation,
+          sitting.row,
+          sitting.col
+        );
+      }
     }
 
     return () => {
