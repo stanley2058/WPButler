@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, type ChangeEvent } from "react";
 import { Flex, Modal, Text, Input, Button } from "@mantine/core";
 import Swal from "sweetalert2";
 import ClassroomUtils from "../services/ClassroomUtils";

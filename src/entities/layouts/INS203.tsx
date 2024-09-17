@@ -1,6 +1,6 @@
 import React from "react";
 import { Door, Window, Teacher, WhiteBoard } from "../classroom-objects";
-import ILayout from "../Layout";
+import type ILayout from "../Layout";
 
 const INS203: ILayout = {
   id: "INS203",

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { type PropsWithChildren, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Flex, Accordion, Text, Title } from "@mantine/core";
 import FirebaseService from "../services/FirebaseService";

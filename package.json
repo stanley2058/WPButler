@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "deploy": "pnpm dlx firebase deploy"
   },
   "dependencies": {
     "@icons-pack/react-simple-icons": "^10.0.0",

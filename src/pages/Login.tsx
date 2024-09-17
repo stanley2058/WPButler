@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef } from "react";
+import React, { type FormEvent, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Card, Title, Flex } from "@mantine/core";
 import Swal from "sweetalert2";

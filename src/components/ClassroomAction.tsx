@@ -1,8 +1,9 @@
 import React from "react";
 import { Flex, Text } from "@mantine/core";
-import Actions, { IActions, IData } from "./Classroom/Actions";
+import Actions from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";
+import type { IActions, IData } from "./Classroom/Actions";
 
 export default function ClassroomAction(props: {
   info?: { id: string };

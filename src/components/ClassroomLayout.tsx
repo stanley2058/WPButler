@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import ILayout from "../entities/Layout";
 import { Grid, Container, Flex } from "@mantine/core";
 import Seat from "../entities/classroom-objects/Seat";
 import Space from "../entities/classroom-objects/Space";
 import SelectedSeat from "../entities/classroom-objects/SelectedSeat";
+import type ILayout from "../entities/Layout";
 
 export default function ClassroomLayout(props: {
   layout: ILayout;

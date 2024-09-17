@@ -1,6 +1,7 @@
-import { Timestamp } from "@firebase/firestore";
-import ILayout, { LayoutUtils } from "../entities/Layout";
+import { Timestamp } from "firebase/firestore";
+import { LayoutUtils } from "../entities/Layout";
 import FirebaseService from "./FirebaseService";
+import type ILayout from "../entities/Layout";
 
 export interface ClassroomState {
   layout: ILayout;

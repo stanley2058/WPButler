@@ -8,7 +8,9 @@ import { INS201, INS203, INS203_201 } from "../entities/layouts";
 import SeatSelectionService from "../services/SeatSelectionService";
 import FirebaseService from "../services/FirebaseService";
 import SeatGuideDialog from "../components/SeatGuideDialog";
-import ClassroomUtils, { ClassroomState } from "../services/ClassroomUtils";
+import ClassroomUtils, {
+  type ClassroomState,
+} from "../services/ClassroomUtils";
 import { LayoutUtils } from "../entities/Layout";
 
 const layouts = [

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import FirebaseService from "../../services/FirebaseService";
-import { SeatRecord as SeatRecordType } from "../../entities/SeatRecord";
 import { Button, Select, Flex } from "@mantine/core";
+import FirebaseService from "../../services/FirebaseService";
 import SeatTableCreator from "../../services/SeatTableCreator";
+import type { SeatRecord as SeatRecordType } from "../../entities/SeatRecord";
 
 export default function SeatRecord() {
   const [records, setRecords] = useState<SeatRecordType[]>([]);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Flex, Select, Text } from "@mantine/core";
-import ClassTime from "../../entities/ClassTime";
+import type ClassTime from "../../entities/ClassTime";
 import FirebaseService from "../../services/FirebaseService";
 
 export default function GradeSum() {
@@ -25,12 +25,12 @@ export default function GradeSum() {
     const map: { [id: string]: number } = {};
     data.resolved.forEach((record) => {
       if (!map[record.id]) map[record.id] = 0;
-      map[record.id] += record.points;
-      if (map[record.id] > maxPoints) map[record.id] = maxPoints;
+      map[record.id]! += record.points;
+      if (map[record.id]! > maxPoints) map[record.id] = maxPoints;
     });
     setStudentRecords(
       Object.keys(map)
-        .map((k) => ({ id: k, points: map[k] }))
+        .map((k) => ({ id: k, points: map[k]! }))
         .filter((r) => r.points > 0)
         .sort((a, b) => a.id.localeCompare(b.id)),
     );

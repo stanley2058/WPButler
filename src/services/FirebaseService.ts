@@ -6,7 +6,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  DocumentData,
   DocumentReference,
   getDoc,
   getDocs,
@@ -15,28 +14,29 @@ import {
   query,
   setDoc,
   Timestamp,
-  Unsubscribe as FirestoreUnsubscribe,
   updateDoc,
   where,
   FieldValue,
+  type DocumentData,
+  type Unsubscribe as FirestoreUnsubscribe,
 } from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  User,
-  Unsubscribe as AuthUnsubscribe,
   updatePassword,
+  type User,
+  type Unsubscribe as AuthUnsubscribe,
 } from "firebase/auth";
 import Config from "../../Config";
-import ClassTime from "../entities/ClassTime";
-import {
+import type ClassTime from "../entities/ClassTime";
+import type {
   ClassroomQueue,
   ClassroomQueueFlatten,
   QueueItem,
   QueueItemFlatten,
 } from "../entities/ClassroomQueue";
-import { SeatRecord, SeatRecordFlatten } from "../entities/SeatRecord";
+import type { SeatRecord, SeatRecordFlatten } from "../entities/SeatRecord";
 
 export default class FirebaseService {
   private static instance: FirebaseService;
@@ -149,7 +149,7 @@ export default class FirebaseService {
           (s) => s.studentId === myStudent.studentId,
         );
         occupied.sort((a, b) => a.taId.localeCompare(b.taId));
-        if (occupied.length > 1 && occupied[0].taId !== taId) {
+        if (occupied.length > 1 && occupied[0]!.taId !== taId) {
           FirebaseService.Instance.release(myStudent.studentId);
         }
       }

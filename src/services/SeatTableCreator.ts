@@ -1,6 +1,6 @@
 import { LayoutUtils } from "../entities/Layout";
 import { INS203_201 } from "../entities/layouts";
-import { SeatRecord } from "../entities/SeatRecord";
+import type { SeatRecord } from "../entities/SeatRecord";
 
 export default class SeatTableCreator {
   private static instance: SeatTableCreator;
@@ -14,7 +14,7 @@ export default class SeatTableCreator {
   createSeatTableCSV(record: SeatRecord) {
     const layout = INS203_201;
     const rowCount = layout.seats.length;
-    const colCount = layout.seats[0].length;
+    const colCount = layout.seats[0]!.length;
     let mapped = record.sittingRecords.map((r) => ({
       ...r,
       rotation: 0,
@@ -30,7 +30,7 @@ export default class SeatTableCreator {
 
     const studentTimeMapping: Record<string, number> = {};
     mapped.forEach((r) => {
-      if (studentTimeMapping[r.id] && studentTimeMapping[r.id] > r.createAt)
+      if (studentTimeMapping[r.id] && studentTimeMapping[r.id]! > r.createAt)
         return;
       studentTimeMapping[r.id] = r.createAt;
     });
@@ -40,11 +40,11 @@ export default class SeatTableCreator {
     for (let i = 0; i < rowCount; i++) table.push([]);
     mapped.forEach((r) => {
       if (
-        table[r.sitting.row][r.sitting.col] &&
-        table[r.sitting.row][r.sitting.col].time > r.createAt
+        table[r.sitting.row]![r.sitting.col] &&
+        table[r.sitting.row]![r.sitting.col]!.time > r.createAt
       )
         return;
-      table[r.sitting.row][r.sitting.col] = {
+      table[r.sitting.row]![r.sitting.col] = {
         id: r.id,
         time: r.createAt,
       };
@@ -63,7 +63,7 @@ export default class SeatTableCreator {
       for (let j = 0; j < colCount + 2; j++) {
         if (j === 0 || j === colCount + 1) {
         } else {
-          const id = table[i][j - 1]?.id ?? "";
+          const id = table[i]![j - 1]?.id ?? "";
           csvData += `,${id}`;
         }
       }

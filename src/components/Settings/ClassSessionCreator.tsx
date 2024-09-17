@@ -1,6 +1,11 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  type ChangeEvent,
+  type FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import FirebaseService from "../../services/FirebaseService";
-import ClassTime from "../../entities/ClassTime";
+import type ClassTime from "../../entities/ClassTime";
 import Swal from "sweetalert2";
 import {
   Input,

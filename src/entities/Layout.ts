@@ -54,12 +54,13 @@ export class LayoutUtils {
     return LayoutUtils.mirrorDiagonalMatrix(m).reverse();
   }
   static mirrorDiagonalMatrix(m: number[][]): number[][] {
+    if (!m[0]) return [];
     const rotated = new Array(m[0].length)
       .fill([])
-      .map((e) => new Array(m.length));
+      .map(() => new Array(m.length));
     for (let i = 0; i < m.length; i++) {
-      for (let j = 0; j < m[i].length; j++) {
-        rotated[j][i] = m[i][j];
+      for (let j = 0; j < m[i]!.length; j++) {
+        rotated[j]![i] = m[i]![j];
       }
     }
     return rotated;
@@ -128,7 +129,7 @@ export class LayoutUtils {
     row: number,
     col: number,
   ): { row: number; col: number } {
-    const width = oriLayout.seats[0].length;
+    const width = oriLayout.seats[0]!.length;
     return { row: width - col - 1, col: row };
   }
 
