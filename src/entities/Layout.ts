@@ -87,7 +87,6 @@ export class LayoutUtils {
       rotatedRow = coordinates.row;
       rotatedCol = coordinates.col;
     }
-    console.log(rotatedRow, rotatedCol);
     return { row: rotatedRow, col: rotatedCol };
   }
 

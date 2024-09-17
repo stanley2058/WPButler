@@ -26,7 +26,7 @@ export default class SeatSelectionService {
 
   emitSelection(row: number, col: number) {
     SeatSelectionService.Instance.listeners.forEach((l) =>
-      l.callback(row, col)
+      l.callback(row, col),
     );
   }
 }

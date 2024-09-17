@@ -1,6 +1,6 @@
 import { LayoutUtils } from "../entities/Layout";
 import { INS203_201 } from "../entities/layouts";
-import SeatRecord from "../entities/SeatRecord";
+import { SeatRecord } from "../entities/SeatRecord";
 
 export default class SeatTableCreator {
   private static instance: SeatTableCreator;
@@ -23,35 +23,30 @@ export default class SeatTableCreator {
           layout,
           r.rotation,
           r.sitting.row,
-          r.sitting.col
+          r.sitting.col,
         ),
       },
     }));
 
-    const studentTimeMapping: any = {};
+    const studentTimeMapping: Record<string, number> = {};
     mapped.forEach((r) => {
-      if (
-        studentTimeMapping[r.id] &&
-        studentTimeMapping[r.id] > r.createAt.toMillis()
-      )
+      if (studentTimeMapping[r.id] && studentTimeMapping[r.id] > r.createAt)
         return;
-      studentTimeMapping[r.id] = r.createAt.toMillis();
+      studentTimeMapping[r.id] = r.createAt;
     });
-    mapped = mapped.filter(
-      (r) => r.createAt.toMillis() === studentTimeMapping[r.id]
-    );
+    mapped = mapped.filter((r) => r.createAt === studentTimeMapping[r.id]);
 
     const table: { id: string; time: number }[][] = [];
     for (let i = 0; i < rowCount; i++) table.push([]);
     mapped.forEach((r) => {
       if (
         table[r.sitting.row][r.sitting.col] &&
-        table[r.sitting.row][r.sitting.col].time > r.createAt.toMillis()
+        table[r.sitting.row][r.sitting.col].time > r.createAt
       )
         return;
       table[r.sitting.row][r.sitting.col] = {
         id: r.id,
-        time: r.createAt.toMillis(),
+        time: r.createAt,
       };
     });
 
@@ -80,7 +75,6 @@ export default class SeatTableCreator {
       if (j !== colCount + 1) csvData += ",";
     }
     csvData += "\n";
-    console.log(csvData);
     return csvData;
   }
 }

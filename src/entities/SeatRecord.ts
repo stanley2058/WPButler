@@ -9,7 +9,7 @@ export interface SeatRecord {
       row: number;
       col: number;
     };
-    createAt: Timestamp;
+    createAt: number;
   }[];
 }
 
@@ -20,6 +20,6 @@ export interface SeatRecordFlatten {
     rotation: number;
     sittingRow: number;
     sittingCol: number;
-    createAt: Timestamp;
+    createAt: number;
   }[];
 }
