@@ -1,6 +1,6 @@
 import { Timestamp } from "@firebase/firestore";
 
-export default interface SeatRecord {
+export interface SeatRecord {
   classTime: Timestamp;
   sittingRecords: {
     id: string;
@@ -9,6 +9,17 @@ export default interface SeatRecord {
       row: number;
       col: number;
     };
+    createAt: Timestamp;
+  }[];
+}
+
+export interface SeatRecordFlatten {
+  classTime: Timestamp;
+  sittingRecords: {
+    id: string;
+    rotation: number;
+    sittingRow: number;
+    sittingCol: number;
     createAt: Timestamp;
   }[];
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Flex, Select, Text } from "@mantine/core";
 import ClassTime from "../../entities/ClassTime";
 import FirebaseService from "../../services/FirebaseService";
-import { ClassroomQueue } from "../../entities/ClassroomQueue";
 
 export default function GradeSum() {
   const [classTimeList, setClassTimeList] = useState<
@@ -15,23 +14,16 @@ export default function GradeSum() {
 
   const getTime = async () => {
     const classTimeDocs = await FirebaseService.Instance.getAllClassTime();
-    if (classTimeDocs.empty) return;
-    setClassTimeList(
-      classTimeDocs.docs
-        .filter(
-          (doc) => (doc.data() as ClassTime).start.toMillis() < Date.now(),
-        )
-        .map((doc) => ({ time: doc.data() as ClassTime, id: doc.id }))
-        .sort((a, b) => b.time.start.toMillis() - a.time.start.toMillis()),
-    );
+    if (!classTimeDocs) return;
+    setClassTimeList(classTimeDocs);
   };
   const getClassroom = async () => {
     if (!classId) return;
-    const res = await FirebaseService.Instance.getClassroomQueueById(classId);
+    const data = await FirebaseService.Instance.getClassroomQueueById(classId);
     const maxPoints =
       classTimeList.find((c) => c.id === classId)?.time.maxPoints || 0;
     const map: { [id: string]: number } = {};
-    (res.data() as ClassroomQueue).resolved.forEach((record) => {
+    data.resolved.forEach((record) => {
       if (!map[record.id]) map[record.id] = 0;
       map[record.id] += record.points;
       if (map[record.id] > maxPoints) map[record.id] = maxPoints;

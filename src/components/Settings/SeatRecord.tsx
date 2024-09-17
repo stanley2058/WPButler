@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from "react";
 import FirebaseService from "../../services/FirebaseService";
-import { default as SeatRecordObject } from "../../entities/SeatRecord";
+import { SeatRecord as SeatRecordType } from "../../entities/SeatRecord";
 import { Button, Select, Flex } from "@mantine/core";
 import SeatTableCreator from "../../services/SeatTableCreator";
 
 export default function SeatRecord() {
-  const [records, setRecords] = useState<SeatRecordObject[]>([]);
+  const [records, setRecords] = useState<SeatRecordType[]>([]);
   const [selectedIndex, setSelectedIndex] = useState("");
 
   useEffect(() => {
-    const getData = async () => {
-      const records = await FirebaseService.Instance.getSeatRecordList();
-      const data = records.docs
-        .map((r) => r.data() as SeatRecordObject)
-        .sort((a, b) => b.classTime.toMillis() - a.classTime.toMillis());
-      setRecords(data);
-    };
-    getData();
+    FirebaseService.Instance.getSeatRecordList().then(setRecords);
   }, []);
 
   const download = () => {

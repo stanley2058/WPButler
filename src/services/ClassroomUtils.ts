@@ -33,7 +33,7 @@ export default class ClassroomUtils {
       const { row, col } = translateFunc(
         state.layout,
         state.sitting.row,
-        state.sitting.col
+        state.sitting.col,
       );
       state = { ...state, layout, rotation, sitting: { row, col } };
     } else state = { ...state, layout, rotation };
@@ -43,7 +43,7 @@ export default class ClassroomUtils {
   static onGuideDialogClose(
     state: ClassroomState,
     id: string,
-    rotation: number
+    rotation: number,
   ): ClassroomState {
     return {
       ...state,
@@ -77,7 +77,7 @@ export default class ClassroomUtils {
       id: state.studentInfo.id,
       rotation: state.rotation,
       sitting: state.sitting,
-      appliedAt: Timestamp.now(),
+      appliedAt: Timestamp.now().toMillis(),
     });
   }
   static cancelCall(state?: ClassroomState) {

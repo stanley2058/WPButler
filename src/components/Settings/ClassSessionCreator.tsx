@@ -33,12 +33,8 @@ export default function ClassSessionCreator() {
 
   const getTime = async () => {
     const classTimeDocs = await FirebaseService.Instance.getAllClassTime();
-    if (classTimeDocs.empty) return;
-    setClassTimeList(
-      classTimeDocs.docs
-        .map((doc) => ({ time: doc.data() as ClassTime, id: doc.id }))
-        .sort((a, b) => b.time.start.toMillis() - a.time.start.toMillis()),
-    );
+    if (!classTimeDocs) return;
+    setClassTimeList(classTimeDocs);
   };
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
