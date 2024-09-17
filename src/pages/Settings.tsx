@@ -1,104 +1,73 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Typography,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useNavigate } from "react-router-dom";
+import { Container, Flex, Accordion, Text, Title } from "@mantine/core";
 import FirebaseService from "../services/FirebaseService";
 import ClassSessionCreator from "../components/Settings/ClassSessionCreator";
 import GradeSum from "../components/Settings/GradeSum";
 import TASettings from "../components/Settings/TASettings";
 import SeatRecord from "../components/Settings/SeatRecord";
 
-const useStyles = makeStyles({
-  root: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    placeItems: "center",
-    justifyContent: "center",
-    marginTop: "2em",
-    marginBottom: "2em",
-  },
-  accordionBase: {
-    marginLeft: "1em",
-    marginRight: "1em",
-    width: "clamp(50%, 40em, 90%)",
-  },
-  accordionTitle: {
-    fontSize: ".9em",
-    fontWeight: "bold",
-  },
-  accordionContent: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  sectionTitle: {
-    marginTop: "2em",
-  },
-});
-
 function CustomAccordion(props: PropsWithChildren<{ title: string }>) {
-  const classes = useStyles();
   return (
-    <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.accordionTitle}>
+    <Accordion.Item key={props.title} value={props.title}>
+      <Accordion.Control>
+        <Text fw="500" c="dark">
           {props.title}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.accordionContent}>
-        {props.children}
-      </AccordionDetails>
-    </Accordion>
+        </Text>
+      </Accordion.Control>
+      <Accordion.Panel>
+        <Flex direction="column">{props.children}</Flex>
+      </Accordion.Panel>
+    </Accordion.Item>
   );
 }
 
 export default function Settings() {
-  const classes = useStyles();
   const [loginEmail, setLoginEmail] = useState("");
 
-  const history = useHistory();
+  const navigate = useNavigate();
   useEffect(() => {
     const checkAuth = async () => {
-      if (!(await FirebaseService.Instance.hasLogin)) history.push("/login");
+      if (!(await FirebaseService.Instance.hasLogin)) navigate("/login");
       setLoginEmail(FirebaseService.Instance.currentUser?.email || "");
     };
     checkAuth();
   }, []);
   return (
-    <div className={classes.root}>
-      <div className={classes.accordionBase}>
-        <Typography variant="h5">目前登入：{loginEmail}</Typography>
+    <Flex my="2rem" justify="center" align="center">
+      <Container mx="1rem" w="clamp(50%, 40em, 90%)">
+        <Title order={3} mt="0.5rem" mb="2rem">
+          目前登入：{loginEmail}
+        </Title>
 
-        <Typography sx={{ marginTop: "2em" }} variant="h6">
+        <Title order={4} mt="1rem" mb="0.2rem">
           課程相關
-        </Typography>
+        </Title>
 
-        <CustomAccordion title="編輯課程">
-          <ClassSessionCreator />
-        </CustomAccordion>
+        <Accordion>
+          <CustomAccordion title="編輯課程">
+            <ClassSessionCreator />
+          </CustomAccordion>
 
-        <CustomAccordion title="成績統計">
-          <GradeSum />
-        </CustomAccordion>
+          <CustomAccordion title="成績統計">
+            <GradeSum />
+          </CustomAccordion>
 
-        <CustomAccordion title="座位記錄">
-          <SeatRecord />
-        </CustomAccordion>
+          <CustomAccordion title="座位記錄">
+            <SeatRecord />
+          </CustomAccordion>
+        </Accordion>
 
-        <Typography sx={{ marginTop: "2em" }} variant="h6">
+        <Title order={4} mt="1rem" mb="0.2rem">
           助教設定
-        </Typography>
+        </Title>
 
-        <CustomAccordion title="助教設定">
-          <TASettings />
-        </CustomAccordion>
-      </div>
-    </div>
+        <Accordion>
+          <CustomAccordion title="助教設定">
+            <TASettings />
+          </CustomAccordion>
+        </Accordion>
+      </Container>
+    </Flex>
   );
 }

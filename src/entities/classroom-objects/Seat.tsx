@@ -1,36 +1,39 @@
-import React from "react";
-import { Tooltip } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { EventSeat } from "@mui/icons-material";
+import React, { forwardRef } from "react";
+import { ThemeIcon, Tooltip } from "@mantine/core";
+import { IconArmchair } from "@tabler/icons-react";
 import SeatSelectionService from "../../services/SeatSelectionService";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    cursor: "pointer",
-  },
-}));
 export default function Seat(props: {
   row: number;
   col: number;
   color: number;
   clickable?: boolean;
 }) {
-  const classes = useStyles();
-  const displayColor = props.color === 1 ? "action" : "info";
+  const displayColor = props.color === 1 ? "dark" : "grape";
   const tooltipText =
     props.color === 1 ? "移動到這裡" : "移動到這裡 (橫向座位)";
 
-  if (!props.clickable) return <EventSeat color={displayColor} />;
+  if (!props.clickable) return <ChairIcon color={displayColor} />;
   return (
     <a
-      className={classes.root}
       onClick={() => {
         SeatSelectionService.Instance.emitSelection(props.row, props.col);
       }}
+      style={{ cursor: "pointer" }}
     >
-      <Tooltip title={tooltipText}>
-        <EventSeat color={displayColor} />
+      <Tooltip label={tooltipText}>
+        <ChairIcon color={displayColor} />
       </Tooltip>
     </a>
   );
 }
+
+const ChairIcon = forwardRef<HTMLDivElement, { color: string }>(
+  ({ color }, ref) => {
+    return (
+      <ThemeIcon ref={ref} color={color} variant="transparent" size="sm">
+        <IconArmchair />
+      </ThemeIcon>
+    );
+  },
+);

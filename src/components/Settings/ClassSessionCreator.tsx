@@ -1,39 +1,31 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import {
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Delete } from "@mui/icons-material";
-import { makeStyles } from "@mui/styles";
 import FirebaseService from "../../services/FirebaseService";
 import ClassTime from "../../entities/ClassTime";
 import Swal from "sweetalert2";
+import {
+  Input,
+  Button,
+  List,
+  ThemeIcon,
+  Flex,
+  Text,
+  ActionIcon,
+  Title,
+  Grid,
+} from "@mantine/core";
+import {
+  IconClockHour2,
+  IconProgressCheck,
+  IconTrash,
+} from "@tabler/icons-react";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    display: "grid",
-    gridTemplateColumns: "10.5em 1fr",
-    gap: "1em",
-  },
-  inputs: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1em",
-  },
-}));
 export default function ClassSessionCreator() {
-  const classes = useStyles();
   const [classDate, setClassDate] = useState(new Date());
   const [startTime, setStartTime] = useState("14:00");
   const [endTime, setEndTime] = useState("17:00");
   const [amount, setAmount] = useState(2);
   const [homeworkUri, setHomeworkUri] = useState(
-    "https://tronclass.ntou.edu.tw/"
+    "https://tronclass.ntou.edu.tw/",
   );
   const [classTimeList, setClassTimeList] = useState<
     { time: ClassTime; id: string }[]
@@ -45,21 +37,21 @@ export default function ClassSessionCreator() {
     setClassTimeList(
       classTimeDocs.docs
         .map((doc) => ({ time: doc.data() as ClassTime, id: doc.id }))
-        .sort((a, b) => b.time.start.toMillis() - a.time.start.toMillis())
+        .sort((a, b) => b.time.start.toMillis() - a.time.start.toMillis()),
     );
   };
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const start = new Date(
-      `${classDate.toISOString().split("T")[0]}T${startTime}`
+      `${classDate.toISOString().split("T")[0]}T${startTime}`,
     );
     const end = new Date(`${classDate.toISOString().split("T")[0]}T${endTime}`);
     await FirebaseService.Instance.createNewClassSession(
       start,
       end,
       amount,
-      homeworkUri
+      homeworkUri,
     );
     await Swal.fire({
       icon: "success",
@@ -93,91 +85,113 @@ export default function ClassSessionCreator() {
   }, []);
 
   return (
-    <div className={classes.root}>
-      <form className={classes.inputs} onSubmit={submit}>
-        <TextField
-          required
-          label="日期"
-          type="date"
-          value={classDate.toISOString().split("T")[0]}
-          onChange={(date) => setClassDate(new Date(date.target.value))}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <TextField
-          required
-          label="開始時間"
-          type="time"
-          value={startTime}
-          onChange={(time) => setStartTime(time.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <TextField
-          required
-          label="結束時間"
-          type="time"
-          value={endTime}
-          onChange={(time) => setEndTime(time.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <TextField
-          required
-          label="題數"
-          type="number"
-          value={amount}
-          onChange={(amount: ChangeEvent<HTMLInputElement>) =>
-            setAmount(parseInt(amount.target.value))
-          }
-        />
-        <TextField
-          required
-          label="作業連結"
-          type="url"
-          value={homeworkUri}
-          onChange={(e) => setHomeworkUri(e.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <Button variant="contained" color="primary" type="submit">
-          新增
-        </Button>
-      </form>
-      <div>
-        <Typography variant="h6" sx={{ fontSize: ".9em" }}>
-          已預訂時間
-        </Typography>
-        <List>
-          {classTimeList.map((classTime) => (
-            <ListItem
-              key={classTime.time.start.toDate().toLocaleDateString()}
-              disablePadding
-              secondaryAction={
-                classTime.time.start.toDate() > new Date() ? (
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => deleteClass(classTime.id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                ) : null
+    <Grid gutter={{ base: "1rem" }}>
+      <Grid.Col span={4}>
+        <form
+          onSubmit={submit}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          <Input.Wrapper label="日期">
+            <Input
+              required
+              type="date"
+              value={classDate.toISOString().split("T")[0]}
+              onChange={(date) => setClassDate(new Date(date.target.value))}
+            />
+          </Input.Wrapper>
+          <Input.Wrapper label="開始時間">
+            <Input
+              required
+              type="time"
+              value={startTime}
+              onChange={(time) => setStartTime(time.target.value)}
+            />
+          </Input.Wrapper>
+          <Input.Wrapper label="結束時間">
+            <Input
+              required
+              type="time"
+              value={endTime}
+              onChange={(time) => setEndTime(time.target.value)}
+            />
+          </Input.Wrapper>
+          <Input.Wrapper label="題數">
+            <Input
+              required
+              type="number"
+              value={amount}
+              onChange={(amount: ChangeEvent<HTMLInputElement>) =>
+                setAmount(parseInt(amount.target.value))
               }
-            >
-              <ListItemText
-                primary={classTime.time.start
-                  .toDate()
-                  .toLocaleDateString("zh-TW")}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </div>
-    </div>
+            />
+          </Input.Wrapper>
+          <Input.Wrapper label="作業連結">
+            <Input
+              required
+              type="url"
+              value={homeworkUri}
+              onChange={(e) => setHomeworkUri(e.target.value)}
+            />
+          </Input.Wrapper>
+          <Button color="indigo" type="submit">
+            新增
+          </Button>
+        </form>
+      </Grid.Col>
+      <Grid.Col span={8}>
+        <div style={{ maxHeight: "27rem", overflow: "auto" }}>
+          <Title
+            pb="xs"
+            order={6}
+            pos="sticky"
+            top={0}
+            bg="white"
+            style={{ zIndex: 1 }}
+          >
+            已預訂時間
+          </Title>
+          <List
+            spacing="xs"
+            size="sm"
+            center
+            icon={
+              <ThemeIcon color="blue" size={24} radius="xl">
+                <IconClockHour2 />
+              </ThemeIcon>
+            }
+          >
+            {classTimeList.map((classTime) => (
+              <List.Item
+                key={classTime.time.start.toDate().toISOString()}
+                icon={
+                  classTime.time.start.toDate() > new Date() ? undefined : (
+                    <ThemeIcon color="lime" size={24} radius="xl">
+                      <IconProgressCheck />
+                    </ThemeIcon>
+                  )
+                }
+              >
+                <Flex justify="space-between" align="center" gap="0.5rem">
+                  <Text fw={500} ff="monospace">
+                    {`${classTime.time.start.toDate().toLocaleDateString("zh-TW")} (${classTime.time.start.toDate().toLocaleTimeString("zh-TW")} 開始)`}
+                  </Text>
+
+                  {classTime.time.start.toDate() > new Date() ? (
+                    <ActionIcon
+                      aria-label="delete"
+                      onClick={() => deleteClass(classTime.id)}
+                      variant="subtle"
+                      color="red"
+                    >
+                      <IconTrash />
+                    </ActionIcon>
+                  ) : null}
+                </Flex>
+              </List.Item>
+            ))}
+          </List>
+        </div>
+      </Grid.Col>
+    </Grid>
   );
 }

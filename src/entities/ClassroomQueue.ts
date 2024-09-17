@@ -1,20 +1,24 @@
-import { Timestamp } from "firebase/firestore";
-
 export interface ClassroomQueue {
-  occupied: [
-    {
-      studentId: string;
-      taId: string;
-    }
-  ];
+  occupied: OccupiedItem[];
   queue: QueueItem[];
-  resolved: [
-    {
-      id: string;
-      points: number;
-      resolvedAt: Timestamp;
-    }
-  ];
+  resolved: ResolvedItem[];
+}
+
+export interface ClassroomQueueFlatten {
+  occupied: OccupiedItem[];
+  queue: QueueItemFlatten[];
+  resolved: ResolvedItem[];
+}
+
+export interface OccupiedItem {
+  studentId: string;
+  taId: string;
+}
+
+export interface ResolvedItem {
+  id: string;
+  points: number;
+  resolvedAt: number;
 }
 
 export interface QueueItem {
@@ -24,5 +28,13 @@ export interface QueueItem {
     row: number;
     col: number;
   };
-  appliedAt: Timestamp;
+  appliedAt: number;
+}
+
+export interface QueueItemFlatten {
+  id: string;
+  rotation: number;
+  sittingRow: number;
+  sittingCol: number;
+  appliedAt: number;
 }

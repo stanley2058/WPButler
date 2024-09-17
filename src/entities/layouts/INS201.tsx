@@ -8,16 +8,16 @@ const INS201: ILayout = {
   scenes: {
     top: [
       { element: <Door />, width: 1 },
-      { element: <Window />, width: true },
+      { element: <Window />, width: "auto" },
       { element: <Door />, width: 1 },
     ],
-    left: [{ element: <WhiteBoard />, width: true }],
+    left: [{ element: <WhiteBoard />, width: "auto" }],
     right: [
       { element: <Door />, width: 1 },
-      { element: <Window />, width: true },
+      { element: <Window />, width: "auto" },
       { element: <Door />, width: 1 },
     ],
-    bottom: [{ element: <Window />, width: true }],
+    bottom: [{ element: <Window />, width: "auto" }],
   },
   seats: [
     [1, 1, 1, 1, 1, 1],

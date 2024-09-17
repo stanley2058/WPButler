@@ -1,26 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@mui/styles";
 import FirebaseService from "../../services/FirebaseService";
 import { default as SeatRecordObject } from "../../entities/SeatRecord";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-} from "@mui/material";
+import { Button, Select, Flex } from "@mantine/core";
 import SeatTableCreator from "../../services/SeatTableCreator";
-import { Download } from "@mui/icons-material";
 
-const useStyles = makeStyles(() => ({
-  inputs: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1em",
-  },
-}));
 export default function SeatRecord() {
-  const classes = useStyles();
   const [records, setRecords] = useState<SeatRecordObject[]>([]);
   const [selectedIndex, setSelectedIndex] = useState("");
 
@@ -45,7 +29,7 @@ export default function SeatRecord() {
     a.setAttribute("href", csv);
     a.setAttribute(
       "download",
-      `${record.classTime.toDate().toLocaleDateString()}.csv`
+      `${record.classTime.toDate().toLocaleDateString()}.csv`,
     );
     document.body.appendChild(a);
     a.click();
@@ -53,26 +37,25 @@ export default function SeatRecord() {
   };
 
   return (
-    <div className={classes.inputs}>
-      <FormControl fullWidth>
-        <InputLabel id="class-select-label">課程選擇</InputLabel>
-        <Select
-          labelId="class-select-label"
-          id="class-select"
-          value={selectedIndex}
-          label="課程選擇"
-          onChange={(e) => setSelectedIndex(e.target.value.toString())}
-        >
-          {records.map((r, index) => (
-            <MenuItem value={index.toString()} key={index}>
-              {r.classTime.toDate().toLocaleDateString()}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button variant="contained" onClick={() => download()}>
+    <Flex direction="column" gap="1rem">
+      <Select
+        w="100%"
+        id="class-select"
+        label="課程選擇"
+        placeholder="選擇課程時間"
+        checkIconPosition="right"
+        value={selectedIndex}
+        onChange={(v) => {
+          if (v) setSelectedIndex(v);
+        }}
+        data={records.map((r, index) => ({
+          label: `${r.classTime.toDate().toLocaleDateString("zh-TW")} (${r.classTime.toDate().toLocaleTimeString("zh-TW")} 開始)`,
+          value: `${index}`,
+        }))}
+      />
+      <Button color="indigo" onClick={() => download()}>
         下載
       </Button>
-    </div>
+    </Flex>
   );
 }

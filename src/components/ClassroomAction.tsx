@@ -1,23 +1,8 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
+import { Flex, Text } from "@mantine/core";
 import Actions, { IActions } from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";
-
-const useStyles = makeStyles(() => ({
-  root: {
-    padding: ".1em",
-    display: "flex",
-    flexDirection: "column",
-  },
-  info: {
-    marginBottom: ".7em",
-    textAlign: "center",
-  },
-  idNumber: {
-    color: "green",
-  },
-}));
 
 export default function ClassroomAction(props: {
   info?: { id: string };
@@ -27,25 +12,35 @@ export default function ClassroomAction(props: {
   onRotate: (clockwise: boolean) => void;
   actions: IActions;
 }) {
-  const classes = useStyles();
-
   return (
-    <div className={classes.root}>
-      <div className={classes.info}>
-        <div>
+    <Flex p="0.1rem" direction="column">
+      <Flex
+        direction="column"
+        gap="0.5rem"
+        justify="center"
+        align="center"
+        mb="0.8rem"
+        p="0.5rem"
+        ta="center"
+      >
+        <Flex direction="row">
           {!props.hasLogin && (
-            <b>
-              學號：
-              <span className={classes.idNumber}>{props.info?.id || ""}</span>
-            </b>
+            <>
+              <Text fw="bold" inline>
+                學號：
+              </Text>
+              <Text c="gray" inline>
+                {props.info?.id || ""}
+              </Text>
+            </>
           )}
-        </div>
+        </Flex>
         <WaitingQueue
           hasLogin={props.hasLogin}
           waiting={props.waiting}
           queue={props.queue}
         />
-      </div>
+      </Flex>
       <Actions
         hasLogin={props.hasLogin}
         actions={props.actions}
@@ -53,6 +48,6 @@ export default function ClassroomAction(props: {
         waiting={props.waiting}
       />
       <RotationControls onRotate={props.onRotate} />
-    </div>
+    </Flex>
   );
 }

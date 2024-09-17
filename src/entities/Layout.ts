@@ -1,5 +1,3 @@
-import { GridSize } from "@mui/material";
-
 export default interface ILayout {
   // classroom id
   id: string;
@@ -7,13 +5,13 @@ export default interface ILayout {
   name: string;
   scenes: {
     // top: upper wall while displaying
-    top: { element: JSX.Element; width: boolean | GridSize }[];
+    top: { element: JSX.Element; width: "auto" | number }[];
     // left: left wall while displaying
-    left: { element: JSX.Element; width: boolean | GridSize }[];
+    left: { element: JSX.Element; width: "auto" | number }[];
     // right: right wall while displaying
-    right: { element: JSX.Element; width: boolean | GridSize }[];
+    right: { element: JSX.Element; width: "auto" | number }[];
     // bottom: bottom wall while displaying
-    bottom: { element: JSX.Element; width: boolean | GridSize }[];
+    bottom: { element: JSX.Element; width: "auto" | number }[];
   };
   // 0: space, 1: seat; must be rectangle
   seats: number[][];
@@ -71,7 +69,7 @@ export class LayoutUtils {
     standardLayout: ILayout,
     rotation: number,
     rotatedRow: number,
-    rotatedCol: number
+    rotatedCol: number,
   ): { row: number; col: number } {
     rotation %= 4;
     let layout = LayoutUtils.layoutToRotation(standardLayout, rotation);
@@ -97,7 +95,7 @@ export class LayoutUtils {
     standardLayout: ILayout,
     rotation: number,
     row: number,
-    col: number
+    col: number,
   ): { row: number; col: number } {
     rotation %= 4;
     let layout = standardLayout;
@@ -121,7 +119,7 @@ export class LayoutUtils {
   static translateLocationClockwise(
     oriLayout: ILayout,
     row: number,
-    col: number
+    col: number,
   ): { row: number; col: number } {
     const height = oriLayout.seats.length;
     return { row: col, col: height - row - 1 };
@@ -129,7 +127,7 @@ export class LayoutUtils {
   static translateLocationCounterclockwise(
     oriLayout: ILayout,
     row: number,
-    col: number
+    col: number,
   ): { row: number; col: number } {
     const width = oriLayout.seats[0].length;
     return { row: width - col - 1, col: row };

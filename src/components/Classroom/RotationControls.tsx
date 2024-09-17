@@ -1,45 +1,40 @@
 import React from "react";
-import { IconButton, Tooltip } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { RotateLeft, RotateRight } from "@mui/icons-material";
-
-const useStyles = makeStyles(() => ({
-  rotateControl: {
-    display: "flex",
-    justifyContent: "space-evenly",
-    placeItems: "center",
-  },
-}));
+import { ActionIcon, Flex, Tooltip } from "@mantine/core";
+import { IconRotateClockwise2 } from "@tabler/icons-react";
 
 export default function RotationControls(props: {
   onRotate: (clockwise: boolean) => void;
 }) {
-  const classes = useStyles();
   return (
-    <div className={classes.rotateControl}>
-      <Tooltip title="逆時針旋轉">
-        <IconButton
+    <Flex justify="space-evenly" p="0.5rem" align="center">
+      <Tooltip label="逆時針旋轉">
+        <ActionIcon
           onClick={() => {
             props.onRotate(false);
           }}
-          color="secondary"
+          color="blue"
           aria-label="rotate counterclockwise"
+          size="lg"
+          style={{ transform: "scaleX(-1)" }}
+          variant="subtle"
         >
-          <RotateLeft fontSize="large" />
-        </IconButton>
+          <IconRotateClockwise2 />
+        </ActionIcon>
       </Tooltip>
       <span>旋轉座位顯示</span>
-      <Tooltip title="順時針旋轉">
-        <IconButton
+      <Tooltip label="順時針旋轉">
+        <ActionIcon
           onClick={() => {
             props.onRotate(true);
           }}
-          color="secondary"
+          color="blue"
           aria-label="rotate clockwise"
+          size="lg"
+          variant="subtle"
         >
-          <RotateRight fontSize="large" />
-        </IconButton>
+          <IconRotateClockwise2 />
+        </ActionIcon>
       </Tooltip>
-    </div>
+    </Flex>
   );
 }

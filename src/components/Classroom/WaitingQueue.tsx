@@ -1,66 +1,54 @@
 import React from "react";
-import { Tooltip, Badge } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { EmojiPeople, People } from "@mui/icons-material";
-
-const useStyles = makeStyles(() => ({
-  icons: {
-    cursor: "help",
-  },
-  waitingQueueRoot: {
-    display: "flex",
-    placeItems: "center",
-    justifyContent: "center",
-  },
-  waitingQueue: {
-    display: "flex",
-    justifyContent: "space-evenly",
-    maxWidth: "10em",
-    width: "100%",
-  },
-}));
+import { Tooltip, Indicator, ThemeIcon, Flex } from "@mantine/core";
+import { IconUsers, IconUsersGroup } from "@tabler/icons-react";
 
 export default function WaitingQueue(props: {
   hasLogin?: boolean;
   queue?: number;
   waiting?: number;
 }) {
-  const classes = useStyles();
+  const currentOrder = (props.queue ?? -1) + 1;
   return (
-    <div className={classes.waitingQueueRoot}>
-      <div className={classes.waitingQueue}>
+    <Flex justify="center" align="center">
+      <Flex justify="space-evenly" maw="10rem" w="100%" gap="sm">
         {!props.hasLogin && (
-          <Tooltip title="目前順位">
-            <Badge
-              color="secondary"
-              badgeContent={(props.queue ?? -1) + 1}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              overlap="circular"
+          <Tooltip label="目前順位">
+            <Indicator
+              inline
+              position="bottom-end"
+              color="indigo"
+              label={currentOrder}
+              size="1rem"
+              disabled={currentOrder === 0}
             >
-              <EmojiPeople
-                fontSize="large"
-                color="secondary"
-                className={classes.icons}
-              />
-            </Badge>
+              <ThemeIcon
+                color="indigo"
+                style={{ cursor: "help" }}
+                variant="transparent"
+              >
+                <IconUsers />
+              </ThemeIcon>
+            </Indicator>
           </Tooltip>
         )}
-        <Tooltip title="目前等待人數">
-          <Badge
-            color="secondary"
-            badgeContent={props.waiting}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            overlap="circular"
-            showZero
+        <Tooltip label="目前等待人數">
+          <Indicator
+            inline
+            position="bottom-end"
+            color="indigo"
+            label={props.waiting}
+            size="1rem"
           >
-            <People
-              fontSize="large"
-              color="secondary"
-              className={classes.icons}
-            />
-          </Badge>
+            <ThemeIcon
+              color="indigo"
+              style={{ cursor: "help" }}
+              variant="transparent"
+            >
+              <IconUsersGroup />
+            </ThemeIcon>
+          </Indicator>
         </Tooltip>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 }

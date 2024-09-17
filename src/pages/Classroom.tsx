@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { useNavigate } from "react-router-dom";
+import { Flex, Container } from "@mantine/core";
+import Swal from "sweetalert2";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
 import { INS201, INS203, INS203_201 } from "../entities/layouts";
@@ -8,32 +9,16 @@ import SeatSelectionService from "../services/SeatSelectionService";
 import FirebaseService from "../services/FirebaseService";
 import SeatGuideDialog from "../components/SeatGuideDialog";
 import ClassroomUtils, { ClassroomState } from "../services/ClassroomUtils";
-import { useHistory } from "react-router-dom";
 import { LayoutUtils } from "../entities/Layout";
-import Swal from "sweetalert2";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    position: "relative",
-    top: "2em",
-    display: "flex",
-    justifyContent: "center",
-    paddingBottom: "1em",
-  },
-  grid: {
-    maxWidth: "30em",
-  },
-}));
+const layouts = [
+  { name: INS203_201.id, layout: INS203_201 },
+  { name: INS203.id, layout: INS203 },
+  { name: INS201.id, layout: INS201 },
+];
 
 export default function Classroom() {
-  const classes = useStyles();
-  const history = useHistory();
-
-  const layouts = [
-    { name: INS203_201.id, layout: INS203_201 },
-    { name: INS203.id, layout: INS203 },
-    { name: INS201.id, layout: INS201 },
-  ];
+  const navigate = useNavigate();
   const getCurrentStandardLayout = () => {
     return (
       layouts.find((l) => l.name === state.layout.id) || {
@@ -60,17 +45,17 @@ export default function Classroom() {
     const classroomRaw = localStorage.getItem("classroom");
 
     const authUnSub = FirebaseService.Instance.onAuthStateChanged(
-      (auth) => loginRef.current !== auth && setLogin(auth)
+      (auth) => loginRef.current !== auth && setLogin(auth),
     );
 
     SeatSelectionService.Instance.register(
       "classroom-selection-listener",
-      onSeatSelection
+      onSeatSelection,
     );
 
     if (classroomRaw) {
       const { layout, rotation, studentInfo, sitting } = JSON.parse(
-        classroomRaw
+        classroomRaw,
       ) as ClassroomState;
       if (!studentInfo && !sitting) return;
       const rLayout = layouts.find((l) => l.name === layout.id) || {
@@ -89,7 +74,7 @@ export default function Classroom() {
           studentInfo.id,
           rotation,
           sitting.row,
-          sitting.col
+          sitting.col,
         );
       }
     }
@@ -116,9 +101,9 @@ export default function Classroom() {
             }).then(() => {
               if (stateRef.current?.studentInfo?.id)
                 FirebaseService.Instance.dequeue(
-                  stateRef.current.studentInfo.id
+                  stateRef.current.studentInfo.id,
                 );
-              history.push("/");
+              navigate("/");
             });
           } else {
             ClassroomUtils.setGuideDialogOpenState(false);
@@ -126,7 +111,7 @@ export default function Classroom() {
               icon: "info",
               title: "課程時間已結束",
               text: "請將作業保存帶走，並在離開教室前關閉電腦。",
-            }).then(() => history.push("/"));
+            }).then(() => navigate("/"));
           }
         } else {
           if (classTime?.thisWeekHomeworkUrl && stateRef.current) {
@@ -136,14 +121,14 @@ export default function Classroom() {
             });
           }
         }
-      }
+      },
     );
     const classroomQueueUnSub =
       FirebaseService.Instance.onClassroomQueueChanged(async (queue) => {
         await FirebaseService.Instance.isDataReady();
         if (!queue || !stateRef.current) return;
         const index = queue.queue.findIndex(
-          (q) => q.id === stateRef.current?.studentInfo?.id
+          (q) => q.id === stateRef.current?.studentInfo?.id,
         );
         let newState: ClassroomState = {
           ...stateRef.current,
@@ -162,7 +147,7 @@ export default function Classroom() {
               getCurrentStandardLayout().layout,
               rotation,
               sitting.row,
-              sitting.col
+              sitting.col,
             );
 
             newState = {
@@ -174,7 +159,7 @@ export default function Classroom() {
                 getCurrentStandardLayout().layout,
                 stateRef.current.rotation,
                 row,
-                col
+                col,
               ),
             };
           } else {
@@ -212,7 +197,7 @@ export default function Classroom() {
   const onGuideDialogClose = (id: string, rotation: number) => {
     if (!stateRef.current) return;
     setAndSaveState(
-      ClassroomUtils.onGuideDialogClose(stateRef.current, id, rotation)
+      ClassroomUtils.onGuideDialogClose(stateRef.current, id, rotation),
     );
   };
   const onRotate = (clockwise: boolean) => {
@@ -236,32 +221,31 @@ export default function Classroom() {
   };
 
   return (
-    <div className={classes.root}>
+    <Flex pos="relative" justify="center" top="1rem" pb="1rem">
       {!hasLogin && (
         <SeatGuideDialog
           open={!state.studentInfo}
           onClose={onGuideDialogClose}
         />
       )}
-      <Grid container direction="column" className={classes.grid}>
-        <Grid item xs>
-          <ClassroomAction
-            queue={state.waiting.queue}
-            waiting={state.waiting.waiting}
-            hasLogin={hasLogin}
-            info={state.studentInfo}
-            onRotate={onRotate}
-            actions={actions}
-          />
-        </Grid>
-        <Grid item xs>
-          <ClassroomLayout
-            layout={state.layout}
-            sitting={state.sitting}
-            clickable={!hasLogin && state.waiting.queue === -1}
-          />
-        </Grid>
-      </Grid>
-    </div>
+      <Flex
+        direction="column"
+        style={{ maxWidth: "min(30rem, 100%)", width: "100%" }}
+      >
+        <ClassroomAction
+          queue={state.waiting.queue}
+          waiting={state.waiting.waiting}
+          hasLogin={hasLogin}
+          info={state.studentInfo}
+          onRotate={onRotate}
+          actions={actions}
+        />
+        <ClassroomLayout
+          layout={state.layout}
+          sitting={state.sitting}
+          clickable={!hasLogin && state.waiting.queue === -1}
+        />
+      </Flex>
+    </Flex>
   );
 }

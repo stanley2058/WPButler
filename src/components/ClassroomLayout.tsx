@@ -1,84 +1,97 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import ILayout from "../entities/Layout";
-import { makeStyles, createStyles, styled } from "@mui/styles";
-import { Grid } from "@mui/material";
+import { Grid, Container, Flex } from "@mantine/core";
 import Seat from "../entities/classroom-objects/Seat";
 import Space from "../entities/classroom-objects/Space";
 import SelectedSeat from "../entities/classroom-objects/SelectedSeat";
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      textAlign: "center",
-    },
-    leftAndRightGrid: {
-      height: "100%",
-    },
-    leftAndRight: {
-      maxWidth: "100%",
-      maxHeight: "100%",
-      width: "100%",
-      writingMode: "vertical-lr",
-    },
-    seatBase: {
-      flexDirection: "column",
-      paddingTop: "1em",
-      paddingBottom: "1em",
-    },
-    seatRow: {
-      width: "100%",
-      display: "flex",
-      justifyContent: "space-evenly",
-    },
-  })
-);
 
 export default function ClassroomLayout(props: {
   layout: ILayout;
   sitting?: { row: number; col: number };
   clickable?: boolean;
 }) {
-  const classes = useStyles(props);
+  const centerGridRef = useRef<HTMLDivElement>(null);
+  const lGutterRef = useRef<HTMLDivElement>(null);
+  const rGutterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const lGutterInner = lGutterRef.current?.querySelector<HTMLElement>(
+      ".mantine-Grid-inner",
+    );
+    const rGutterInner = rGutterRef.current?.querySelector<HTMLElement>(
+      ".mantine-Grid-inner",
+    );
+    [lGutterInner, rGutterInner].forEach((e) => {
+      if (!e) return;
+      e.style.flexDirection = "column";
+      e.style.height = "calc(100% + var(--grid-gutter))";
+      e.style.width = "auto";
+    });
+    const centerGridInner = centerGridRef.current?.querySelector<HTMLElement>(
+      ".mantine-Grid-inner",
+    );
+    if (centerGridInner) {
+      centerGridInner.style.flexWrap = "nowrap";
+    }
+  }, [props.layout, props.sitting]);
 
   return (
-    <div className={classes.root}>
-      <Grid container>
+    <Container ta="center" p="0" w="100%">
+      <Grid gutter={{ base: 0 }}>
         {props.layout.scenes.top.map((e, id) => (
-          <Grid key={"top-" + id} item xs={e.width}>
+          <Grid.Col key={"top-" + id} span={e.width}>
             {e.element}
-          </Grid>
+          </Grid.Col>
         ))}
       </Grid>
-      <Grid container>
-        <Grid item xs={1}>
+
+      <Grid
+        ref={centerGridRef}
+        gutter={{ base: 0 }}
+        style={{ overflow: "auto" }}
+      >
+        <Grid.Col span={1}>
           <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            direction="column"
-            className={classes.leftAndRightGrid}
+            ref={lGutterRef}
+            gutter={{ base: 0 }}
+            justify="center"
+            align="center"
+            h="100%"
           >
             {props.layout.scenes.left.map((e, id) => (
-              <Grid
+              <Grid.Col
                 key={"left-" + id}
-                className={classes.leftAndRight}
-                item
-                xs={e.width}
+                span={e.width}
+                w="100%"
+                maw="100%"
+                mah="100%"
+                style={{ writingMode: "vertical-lr" }}
               >
                 {e.element}
-              </Grid>
+              </Grid.Col>
             ))}
           </Grid>
-        </Grid>
+        </Grid.Col>
 
-        <Grid item xs>
-          <Grid
-            container
-            className={classes.seatBase}
-            sx={{ flexDirection: "column" }}
+        <Grid.Col
+          span="auto"
+          style={{
+            flexShrink: 0,
+            width: "fit-content",
+            maxWidth: "unset",
+          }}
+        >
+          <Flex
+            direction="column"
+            p="1rem"
+            style={{ width: "fit-content", minWidth: "100%" }}
           >
             {props.layout.seats.map((row, id) => (
-              <Grid item xs key={"row-" + id} className={classes.seatRow}>
+              <Flex
+                key={"row-" + id}
+                justify="space-evenly"
+                style={{ width: "fit-content", minWidth: "100%" }}
+              >
                 {row.map((s, sid) => {
                   if (
                     props.sitting &&
@@ -101,39 +114,42 @@ export default function ClassroomLayout(props: {
                     <Space key={sid} />
                   );
                 })}
-              </Grid>
+              </Flex>
             ))}
-          </Grid>
-        </Grid>
+          </Flex>
+        </Grid.Col>
 
-        <Grid item xs={1}>
+        <Grid.Col span={1}>
           <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            direction="column"
-            className={classes.leftAndRightGrid}
+            ref={rGutterRef}
+            gutter={{ base: 0 }}
+            justify="center"
+            align="center"
+            h="100%"
           >
             {props.layout.scenes.right.map((e, id) => (
-              <Grid
-                className={classes.leftAndRight}
+              <Grid.Col
                 key={"right-" + id}
-                item
-                xs={e.width}
+                span={e.width}
+                w="100%"
+                maw="100%"
+                mah="100%"
+                style={{ writingMode: "vertical-lr" }}
               >
                 {e.element}
-              </Grid>
+              </Grid.Col>
             ))}
           </Grid>
-        </Grid>
+        </Grid.Col>
       </Grid>
-      <Grid container>
+
+      <Grid gutter={{ base: 0 }}>
         {props.layout.scenes.bottom.map((e, id) => (
-          <Grid key={"bottom-" + id} item xs={e.width}>
+          <Grid.Col key={"bottom-" + id} span={e.width}>
             {e.element}
-          </Grid>
+          </Grid.Col>
         ))}
       </Grid>
-    </div>
+    </Container>
   );
 }

@@ -1,28 +1,11 @@
 import React, { useState } from "react";
-import { makeStyles } from "@mui/styles";
-import { Button, TextField, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Button, Code, Flex, Input, Text } from "@mantine/core";
 import FirebaseService from "../../services/FirebaseService";
 import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
 
-const useStyles = makeStyles(() => ({
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: ".5em",
-  },
-  mono: {
-    fontFamily: "monospace",
-    backgroundColor: "lightgray",
-    marginLeft: "2px",
-    marginRight: "2px",
-    paddingLeft: "2px",
-    paddingRight: "2px",
-  },
-}));
 export default function TASettings() {
-  const history = useHistory();
-  const classes = useStyles();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [newPasswd, setNewPasswd] = useState("");
 
@@ -35,7 +18,7 @@ export default function TASettings() {
         text: "成功更新密碼，請重新登入。",
       });
       await FirebaseService.Instance.signOut();
-      history.push("/login");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       await Swal.fire({
@@ -54,7 +37,7 @@ export default function TASettings() {
         text: "成功建立新助教帳號，請重新登入。",
       });
       await FirebaseService.Instance.signOut();
-      history.push("/login");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       await Swal.fire({
@@ -66,60 +49,50 @@ export default function TASettings() {
   };
 
   return (
-    <div>
-      <Typography variant="h6" sx={{ fontSize: ".9em", marginBottom: ".5em" }}>
-        更新密碼
-      </Typography>
-
+    <Flex direction="column" gap="1rem">
       <form
-        className={classes.form}
         onSubmit={(e) => {
           e.preventDefault();
           updatePassed();
         }}
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
       >
-        <TextField
-          required
-          label="新密碼"
-          type="password"
-          value={newPasswd}
-          onChange={(e) => setNewPasswd(e.target.value)}
-        />
-        <Button variant="contained" color="error" type="submit">
+        <Input.Wrapper label="更新密碼">
+          <Input
+            required
+            placeholder="新密碼"
+            type="password"
+            value={newPasswd}
+            onChange={(e) => setNewPasswd(e.target.value)}
+          />
+        </Input.Wrapper>
+        <Button color="red" type="submit">
           更新
         </Button>
       </form>
-
-      <Typography
-        variant="h6"
-        sx={{ fontSize: ".9em", marginTop: "3em", marginBottom: ".5em" }}
-      >
-        新增助教
-      </Typography>
       <form
-        className={classes.form}
         onSubmit={(e) => {
           e.preventDefault();
           addAccount();
         }}
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
       >
-        <TextField
-          required
-          label="信箱"
-          type="email"
-          value={email}
-          onChange={(em) => setEmail(em.target.value)}
-        />
-        <Button variant="contained" color="primary" type="submit">
+        <Input.Wrapper label="新增助教">
+          <Input
+            required
+            placeholder="信箱"
+            type="email"
+            value={email}
+            onChange={(em) => setEmail(em.target.value)}
+          />
+        </Input.Wrapper>
+        <Button color="indigo" type="submit">
           新增
         </Button>
-        <Typography variant="caption">
-          <i>
-            *新帳號預設密碼為<span className={classes.mono}>soselab401</span>
-            登入後請自行更新密碼。
-          </i>
-        </Typography>
+        <Text fs="italic" fz="sm">
+          *新帳號預設密碼為 <Code>soselab401</Code> 登入後請自行更新密碼。
+        </Text>
       </form>
-    </div>
+    </Flex>
   );
 }

@@ -1,17 +1,10 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
+import { Flex } from "@mantine/core";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    backgroundColor: "limegreen",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    placeItems: "center",
-  },
-}));
 export default function Door() {
-  const classes = useStyles();
-  return <div className={classes.root}>門</div>;
+  return (
+    <Flex bg="lime" w="100%" h="100%" justify="center" align="center">
+      門
+    </Flex>
+  );
 }

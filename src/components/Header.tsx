@@ -1,142 +1,120 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  AppShell,
+  Burger,
+  Title,
+  Text,
   Tooltip,
-} from "@mui/material";
-import { Class, Info, Settings, ExitToApp } from "@mui/icons-material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { makeStyles } from "@mui/styles";
+  Drawer,
+  Group,
+  Button,
+  ThemeIcon,
+  Flex,
+  Space,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import FirebaseService from "../services/FirebaseService";
+import {
+  IconBook2,
+  IconInfoCircle,
+  IconLogout,
+  IconSettings,
+} from "@tabler/icons-react";
 
-const useStyles = makeStyles(() => ({
-  root: { flexGrow: 1 },
-  menuButton: { marginRight: "1em" },
-  title: {
-    cursor: "pointer",
+const entries = [
+  {
+    name: "教室",
+    path: "/classroom",
+    icon: <IconBook2 />,
   },
-  list: { width: 200 },
-}));
+  {
+    name: "助教管理",
+    path: "/settings",
+    icon: <IconSettings />,
+  },
+  {
+    name: "關於本站",
+    path: "/about",
+    icon: <IconInfoCircle />,
+  },
+];
 
 export default function Header() {
-  const classes = useStyles();
-  const history = useHistory();
-  const [state, setState] = useState<{ open: boolean; hasLogin?: boolean }>({
-    open: false,
-  });
-  useEffect(() => {
-    const unSub = FirebaseService.Instance.onAuthStateChanged((hasLogin) => {
-      if (hasLogin !== state.hasLogin) {
-        setState({
-          ...state,
-          hasLogin,
-        });
-      }
-    });
-    return unSub;
-  }, []);
-
-  const entries = [
-    {
-      name: "教室",
-      path: "/classroom",
-      icon: <Class />,
-    },
-    {
-      name: "助教管理",
-      path: "/settings",
-      icon: <Settings />,
-    },
-    {
-      name: "關於本站",
-      path: "/about",
-      icon: <Info />,
-    },
-  ];
-
-  const toggleDrawer = (open: boolean) => () => {
-    setState({ ...state, open });
-  };
-
-  const list = (
-    <div
-      className={classes.list}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <List>
-        {entries.map((entry) => (
-          <ListItem
-            button
-            component="a"
-            key={entry.name}
-            onClick={() => {
-              history.push(entry.path);
-            }}
-          >
-            <ListItemIcon>{entry.icon}</ListItemIcon>
-            <ListItemText primary={entry.name} />
-          </ListItem>
-        ))}
-        {state.hasLogin && (
-          <ListItem
-            button
-            component="a"
-            key="logout"
-            onClick={async () => {
-              await FirebaseService.Instance.signOut();
-              history.push("/");
-            }}
-          >
-            <ListItemIcon>
-              <ExitToApp />
-            </ListItemIcon>
-            <ListItemText primary="登出" />
-          </ListItem>
-        )}
-      </List>
-    </div>
-  );
+  const navigate = useNavigate();
+  const [hasLogin, setLogin] = useState(false);
+  const [opened, { toggle }] = useDisclosure();
+  useEffect(() => FirebaseService.Instance.onAuthStateChanged(setLogin), []);
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer(true)}
+    <AppShell.Header bg="indigo" pos="relative">
+      <Group h="100%" px="sm" c="white">
+        <Burger opened={opened} color="white" onClick={toggle} size="sm" />
+        <Tooltip label="回首頁">
+          <Title
+            order={3}
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Drawer anchor="left" open={state.open} onClose={toggleDrawer(false)}>
-            {list}
-          </Drawer>
-          <Tooltip title="回首頁">
-            <Typography
-              variant="h5"
-              className={classes.title}
-              component="span"
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Web Programming Butler
-            </Typography>
-          </Tooltip>
-        </Toolbar>
-      </AppBar>
-    </div>
+            Web Programming Butler
+          </Title>
+        </Tooltip>
+
+        <Drawer
+          opened={opened}
+          onClose={toggle}
+          size="15rem"
+          overlayProps={{ backgroundOpacity: 0.5, blur: 4 }}
+        >
+          <NavList hasLogin={hasLogin} />
+        </Drawer>
+      </Group>
+    </AppShell.Header>
+  );
+}
+
+function NavList(props: { hasLogin: boolean }) {
+  const navigate = useNavigate();
+  return (
+    <Flex direction="column">
+      {entries.map((entry) => (
+        <Button
+          key={entry.name}
+          w="100%"
+          justify="start"
+          color="dark"
+          variant="subtle"
+          size="md"
+          onClick={() => navigate(entry.path)}
+        >
+          <ThemeIcon c="dark" variant="transparent">
+            {entry.icon}
+          </ThemeIcon>
+          <Space w="sm" />
+          <Text>{entry.name}</Text>
+        </Button>
+      ))}
+      {props.hasLogin && (
+        <Button
+          key="logout"
+          w="100%"
+          justify="start"
+          color="red"
+          variant="subtle"
+          size="md"
+          onClick={() => {
+            FirebaseService.Instance.signOut().then(() => {
+              navigate("/");
+            });
+          }}
+        >
+          <ThemeIcon c="red" variant="transparent">
+            <IconLogout />
+          </ThemeIcon>
+          <Space w="sm" />
+          <Text>登出</Text>
+        </Button>
+      )}
+    </Flex>
   );
 }

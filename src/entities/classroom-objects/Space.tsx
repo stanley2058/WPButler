@@ -1,10 +1,13 @@
 import React from "react";
-import { EventSeat } from "@mui/icons-material";
+import { ThemeIcon } from "@mantine/core";
+import { IconArmchair } from "@tabler/icons-react";
 
 export default function Space() {
   return (
     <div>
-      <EventSeat htmlColor="rgba(0,0,0,0)" />
+      <ThemeIcon color="transparent" variant="transparent" size="sm">
+        <IconArmchair />
+      </ThemeIcon>
     </div>
   );
 }
