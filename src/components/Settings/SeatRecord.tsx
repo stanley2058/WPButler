@@ -22,7 +22,7 @@ export default function SeatRecord() {
     a.setAttribute("href", csv);
     a.setAttribute(
       "download",
-      `${record.classTime.toDate().toLocaleDateString()}.csv`,
+      `${record.classTime.toDate().toISOString()}.csv`,
     );
     document.body.appendChild(a);
     a.click();
