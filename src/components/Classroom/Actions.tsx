@@ -19,14 +19,20 @@ const RSwal = withReactContent(Swal);
 export interface IActions {
   call: () => void;
   cancelCall: () => void;
-  commonQuestions: () => void;
-  thisWeekHomework: () => void;
   resetSeat: () => void;
   completeDemo: (points: number) => void;
   manualDemo: (id: string, points: number) => void;
 }
 
-function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
+export interface IData {
+  thisWeekHomeworkUrl?: string;
+}
+
+function StudentActions(props: {
+  isInQueue: boolean;
+  actions: IActions;
+  data: IData;
+}) {
   return (
     <Flex direction="column" gap="0.5rem" align="center" justify="center">
       <Button.Group>
@@ -48,18 +54,22 @@ function StudentActions(props: { isInQueue: boolean; actions: IActions }) {
           </Button>
         )}
         <Button
+          component="a"
           leftSection={<IconHelp />}
           color="blue"
-          onClick={props.actions.commonQuestions}
+          href="https://hackmd.io/@stanley2058/HJm6o4xEF"
+          target="_blank"
         >
           常見問題
         </Button>
       </Button.Group>
       <Button.Group variant="contained">
         <Button
+          component="a"
           leftSection={<IconNotebook />}
           color="blue"
-          onClick={props.actions.thisWeekHomework}
+          href={props.data.thisWeekHomeworkUrl || "/"}
+          target="_blank"
         >
           本週作業
         </Button>
@@ -199,8 +209,16 @@ export default function Actions(props: {
   waiting?: number;
   isInQueue: boolean;
   actions: IActions;
+  data: IData;
 }) {
-  if (props.hasLogin)
+  if (props.hasLogin) {
     return <TAActions waiting={props.waiting} actions={props.actions} />;
-  return <StudentActions isInQueue={props.isInQueue} actions={props.actions} />;
+  }
+  return (
+    <StudentActions
+      isInQueue={props.isInQueue}
+      actions={props.actions}
+      data={props.data}
+    />
+  );
 }

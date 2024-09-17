@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flex, Container } from "@mantine/core";
+import { Flex } from "@mantine/core";
 import Swal from "sweetalert2";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
@@ -91,27 +91,17 @@ export default function Classroom() {
       (isSessionAlive, classTime) => {
         if (!isSessionAlive && !hasLogin) {
           if (stateRef.current?.waiting.queue !== -1) {
-            Swal.fire({
-              icon: "info",
-              title: "課程時間已結束",
-              text: "Demo尚在等待佇列中，在完成Demo前請勿關閉本頁。",
-              allowOutsideClick: false,
-              confirmButtonColor: "red",
-              confirmButtonText: "離開佇列",
-            }).then(() => {
-              if (stateRef.current?.studentInfo?.id)
+            fireClassEndAwaitingDemoNotice().then(() => {
+              if (stateRef.current?.studentInfo?.id) {
                 FirebaseService.Instance.dequeue(
                   stateRef.current.studentInfo.id,
                 );
+              }
               navigate("/");
             });
           } else {
             ClassroomUtils.setGuideDialogOpenState(false);
-            Swal.fire({
-              icon: "info",
-              title: "課程時間已結束",
-              text: "請將作業保存帶走，並在離開教室前關閉電腦。",
-            }).then(() => navigate("/"));
+            fireClassEndNotice().then(() => navigate("/"));
           }
         } else {
           if (classTime?.thisWeekHomeworkUrl && stateRef.current) {
@@ -206,10 +196,6 @@ export default function Classroom() {
   };
   const actions = {
     ...ClassroomUtils.getActions(stateRef.current),
-    commonQuestions: () =>
-      window.open("https://hackmd.io/@stanley2058/HJm6o4xEF", "_blank"),
-    thisWeekHomework: () =>
-      window.open(stateRef.current?.thisWeekHomeworkUrl || "/"),
     resetSeat: () => {
       setAndSaveState({
         layout: INS203_201,
@@ -239,6 +225,7 @@ export default function Classroom() {
           info={state.studentInfo}
           onRotate={onRotate}
           actions={actions}
+          data={{ thisWeekHomeworkUrl: state.thisWeekHomeworkUrl }}
         />
         <ClassroomLayout
           layout={state.layout}
@@ -248,4 +235,23 @@ export default function Classroom() {
       </Flex>
     </Flex>
   );
+}
+
+function fireClassEndAwaitingDemoNotice() {
+  return Swal.fire({
+    icon: "info",
+    title: "課程時間已結束",
+    text: "Demo尚在等待佇列中，在完成Demo前請勿關閉本頁。",
+    allowOutsideClick: false,
+    confirmButtonColor: "red",
+    confirmButtonText: "離開佇列",
+  });
+}
+
+function fireClassEndNotice() {
+  return Swal.fire({
+    icon: "info",
+    title: "課程時間已結束",
+    text: "請將作業保存帶走，並在離開教室前關閉電腦。",
+  });
 }
