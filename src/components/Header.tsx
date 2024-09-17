@@ -56,7 +56,7 @@ export default function Header() {
             onClick={() => navigate("/")}
             style={{ cursor: "pointer" }}
           >
-            Web Programming Butler
+            Demo Butler
           </Title>
         </Tooltip>
 

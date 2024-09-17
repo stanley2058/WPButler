@@ -12,8 +12,8 @@ export default defineConfig({
       srcDir: "src",
       filename: "ServiceWorker.js",
       manifest: {
-        name: "WPButler",
-        short_name: "WPButler",
+        name: "DemoButler",
+        short_name: "DemoButler",
         theme_color: "#1976d2",
         background_color: "#fafafa",
         display: "standalone",

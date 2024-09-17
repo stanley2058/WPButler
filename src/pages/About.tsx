@@ -51,9 +51,7 @@ export default function About() {
           <Title order={4}>關於本站</Title>
           <Space h="md" />
 
-          <Text>
-            網頁程式設計助教系統，作為課程作業demo輔助，使用 React 開發。
-          </Text>
+          <Text>課程助教系統，作為課程作業 demo 輔助，使用 React 開發。</Text>
           <Space h="sm" />
 
           <Flex justify="center" align="center" gap="0.5rem">

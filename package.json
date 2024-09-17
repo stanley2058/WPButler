@@ -1,5 +1,5 @@
 {
-  "name": "wp-butler",
+  "name": "demo-butler",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",

@@ -15,7 +15,7 @@ export default function Home() {
         <Card shadow="sm" p="xl" radius="md" withBorder>
           <Card.Section mx="xl">
             <Title order={2} ta="center">
-              網頁程式設計助教系統
+              課程助教系統
             </Title>
           </Card.Section>
           <Space h="md" />

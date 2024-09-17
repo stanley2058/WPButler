@@ -1,6 +1,6 @@
-# Web Programming Butler
+# Demo Butler
 
-> WP Butler is a project developed for the web programming class.
+> Demo Butler is a project developed for the web programming class.
 
 ## Development
 
