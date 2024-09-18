@@ -9,6 +9,7 @@ import {
   SiFirebase as Firebase,
 } from "@icons-pack/react-simple-icons";
 import { Flex, Card, Title, Text, Button, Space } from "@mantine/core";
+import { useTranslation } from "../services/I18n";
 
 const imgList = [
   {
@@ -44,14 +45,15 @@ const imgList = [
 ];
 
 export default function About() {
+  const i18n = useTranslation();
   return (
     <Flex justify="center" align="center" p="md">
       <Card shadow="sm" p="xl" radius="md" withBorder>
         <Card.Section>
-          <Title order={4}>關於本站</Title>
+          <Title order={4}>{i18n.t("about.title")}</Title>
           <Space h="md" />
 
-          <Text>課程助教系統，作為課程作業 demo 輔助，使用 React 開發。</Text>
+          <Text>{i18n.t("about.description")}</Text>
           <Space h="sm" />
 
           <Flex justify="center" align="center" gap="0.5rem">

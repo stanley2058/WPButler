@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Button, Code, Flex, Input, Text } from "@mantine/core";
 import FirebaseService from "../../services/FirebaseService";
 import { Swal } from "../../services/SweatAlert";
+import { useTranslation } from "../../services/I18n";
 
 export default function TASettings() {
+  const i18n = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [newPasswd, setNewPasswd] = useState("");
@@ -14,8 +16,8 @@ export default function TASettings() {
       await FirebaseService.Instance.changePassword(newPasswd);
       await Swal.fire({
         icon: "success",
-        title: "更新密碼",
-        text: "成功更新密碼，請重新登入。",
+        title: i18n.t("management.ta.updatePassword"),
+        text: i18n.t("management.ta.passwordUpdated"),
       });
       await FirebaseService.Instance.signOut();
       navigate("/login");
@@ -23,8 +25,8 @@ export default function TASettings() {
       console.error(error);
       await Swal.fire({
         icon: "error",
-        title: "更新密碼",
-        text: "發生錯誤，請參考瀏覽器Console。",
+        title: i18n.t("management.ta.updatePassword"),
+        text: i18n.t("management.ta.errorOccurred"),
       });
     }
   };
@@ -33,8 +35,8 @@ export default function TASettings() {
       await FirebaseService.Instance.createAccount(email);
       await Swal.fire({
         icon: "success",
-        title: "建立帳號",
-        text: "成功建立新助教帳號，請重新登入。",
+        title: i18n.t("management.ta.createAccount"),
+        text: i18n.t("management.ta.accountCreated"),
       });
       await FirebaseService.Instance.signOut();
       navigate("/login");
@@ -42,8 +44,8 @@ export default function TASettings() {
       console.error(error);
       await Swal.fire({
         icon: "error",
-        title: "建立帳號",
-        text: "發生錯誤，請參考瀏覽器Console。",
+        title: i18n.t("management.ta.createAccount"),
+        text: i18n.t("management.ta.errorOccurred"),
       });
     }
   };
@@ -57,17 +59,17 @@ export default function TASettings() {
         }}
         style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
       >
-        <Input.Wrapper label="更新密碼">
+        <Input.Wrapper label={i18n.t("management.ta.updatePassword")}>
           <Input
             required
-            placeholder="新密碼"
+            placeholder={i18n.t("management.ta.newPassword")}
             type="password"
             value={newPasswd}
             onChange={(e) => setNewPasswd(e.target.value)}
           />
         </Input.Wrapper>
         <Button color="red" type="submit">
-          更新
+          {i18n.t("common.update")}
         </Button>
       </form>
       <form
@@ -77,20 +79,22 @@ export default function TASettings() {
         }}
         style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
       >
-        <Input.Wrapper label="新增助教">
+        <Input.Wrapper label={i18n.t("management.ta.newTAAccount")}>
           <Input
             required
-            placeholder="信箱"
+            placeholder={i18n.t("common.emailAddress")}
             type="email"
             value={email}
             onChange={(em) => setEmail(em.target.value)}
           />
         </Input.Wrapper>
         <Button color="indigo" type="submit">
-          新增
+          {i18n.t("common.create")}
         </Button>
         <Text fs="italic" fz="sm">
-          *新帳號預設密碼為 <Code>soselab401</Code> 登入後請自行更新密碼。
+          {i18n.t("management.ta.defaultPassword.1")}
+          <Code>soselab401</Code>
+          {i18n.t("management.ta.defaultPassword.2")}
         </Text>
       </form>
     </Flex>

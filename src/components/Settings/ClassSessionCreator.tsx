@@ -23,8 +23,10 @@ import {
   IconProgressCheck,
   IconTrash,
 } from "@tabler/icons-react";
+import { useTranslation } from "../../services/I18n";
 
 export default function ClassSessionCreator() {
+  const i18n = useTranslation();
   const [classDate, setClassDate] = useState(new Date());
   const [startTime, setStartTime] = useState("14:00");
   const [endTime, setEndTime] = useState("17:00");
@@ -56,8 +58,8 @@ export default function ClassSessionCreator() {
     );
     await Swal.fire({
       icon: "success",
-      title: "課程編輯",
-      text: "課程建立成功！",
+      title: i18n.t("management.class.editClass"),
+      text: i18n.t("management.class.created"),
     });
     location.reload();
   };
@@ -65,18 +67,18 @@ export default function ClassSessionCreator() {
   const deleteClass = async (id: string) => {
     const res = await Swal.fire({
       icon: "warning",
-      title: "課程編輯",
-      text: "確認要刪除課程？此動作無法復原！",
-      confirmButtonText: "確定",
+      title: i18n.t("management.class.editClass"),
+      text: i18n.t("management.class.confirmDelete"),
+      confirmButtonText: i18n.t("common.confirm"),
       showCancelButton: true,
-      cancelButtonText: "返回",
+      cancelButtonText: i18n.t("common.goBack"),
     });
     if (!res.isConfirmed) return;
     await FirebaseService.Instance.deleteClassSession(id);
     await Swal.fire({
       icon: "success",
-      title: "課程編輯",
-      text: "已刪除課程。",
+      title: i18n.t("management.class.editClass"),
+      text: i18n.t("management.class.deleted"),
     });
     await getTime();
   };
@@ -92,7 +94,7 @@ export default function ClassSessionCreator() {
           onSubmit={submit}
           style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          <Input.Wrapper label="日期">
+          <Input.Wrapper label={i18n.t("management.class.date")}>
             <Input
               required
               type="date"
@@ -100,7 +102,7 @@ export default function ClassSessionCreator() {
               onChange={(date) => setClassDate(new Date(date.target.value))}
             />
           </Input.Wrapper>
-          <Input.Wrapper label="開始時間">
+          <Input.Wrapper label={i18n.t("management.class.startAt")}>
             <Input
               required
               type="time"
@@ -108,7 +110,7 @@ export default function ClassSessionCreator() {
               onChange={(time) => setStartTime(time.target.value)}
             />
           </Input.Wrapper>
-          <Input.Wrapper label="結束時間">
+          <Input.Wrapper label={i18n.t("management.class.endAt")}>
             <Input
               required
               type="time"
@@ -116,7 +118,7 @@ export default function ClassSessionCreator() {
               onChange={(time) => setEndTime(time.target.value)}
             />
           </Input.Wrapper>
-          <Input.Wrapper label="題數">
+          <Input.Wrapper label={i18n.t("management.class.totalPoints")}>
             <Input
               required
               type="number"
@@ -126,7 +128,7 @@ export default function ClassSessionCreator() {
               }
             />
           </Input.Wrapper>
-          <Input.Wrapper label="作業連結">
+          <Input.Wrapper label={i18n.t("management.class.homeworkLink")}>
             <Input
               required
               type="url"
@@ -135,7 +137,7 @@ export default function ClassSessionCreator() {
             />
           </Input.Wrapper>
           <Button color="indigo" type="submit">
-            新增
+            {i18n.t("common.create")}
           </Button>
         </form>
       </Grid.Col>
@@ -148,7 +150,7 @@ export default function ClassSessionCreator() {
             top={0}
             style={{ zIndex: 1, backgroundColor: "var(--mantine-color-body)" }}
           >
-            已預訂時間
+            {i18n.t("management.class.classTime")}
           </Title>
           <List
             spacing="xs"
@@ -173,7 +175,14 @@ export default function ClassSessionCreator() {
               >
                 <Flex justify="space-between" align="center" gap="0.5rem">
                   <Text fw={500} ff="monospace">
-                    {`${classTime.time.start.toDate().toLocaleDateString("zh-TW")} (${classTime.time.start.toDate().toLocaleTimeString("zh-TW")} 開始)`}
+                    {i18n.t("management.class.startAtFull", {
+                      date: classTime.time.start
+                        .toDate()
+                        .toLocaleDateString(i18n.t("localeCode")),
+                      time: classTime.time.start
+                        .toDate()
+                        .toLocaleTimeString(i18n.t("localeCode")),
+                    })}
                   </Text>
 
                   {classTime.time.start.toDate() > new Date() ? (

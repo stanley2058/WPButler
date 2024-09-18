@@ -13,6 +13,7 @@ import About from "./pages/About";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Header from "./components/Header";
+import { LocaleContextProvider } from "./services/I18n";
 
 import "@mantine/core/styles.css";
 import "./index.css";
@@ -24,21 +25,23 @@ export const theme = createTheme({
 const root = createRoot(document.getElementById("root")!);
 root.render(
   <MantineProvider theme={theme}>
-    <AppShell header={{ height: 60 }} padding="sm">
-      <Router>
-        <Header />
-        <AppShell.Main mt="-60px">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/classroom/*" element={<Classroom />} />
-            <Route path="/settings/*" element={<Settings />} />
-            <Route path="/about/*" element={<About />} />
-            <Route path="/login/*" element={<Login />} />
-          </Routes>
-        </AppShell.Main>
-      </Router>
-    </AppShell>
-    <SwalTheme />
+    <LocaleContextProvider>
+      <AppShell header={{ height: 60 }} padding="sm">
+        <Router>
+          <Header />
+          <AppShell.Main mt="-60px">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/classroom/*" element={<Classroom />} />
+              <Route path="/settings/*" element={<Settings />} />
+              <Route path="/about/*" element={<About />} />
+              <Route path="/login/*" element={<Login />} />
+            </Routes>
+          </AppShell.Main>
+        </Router>
+      </AppShell>
+      <SwalTheme />
+    </LocaleContextProvider>
   </MantineProvider>,
 );
 

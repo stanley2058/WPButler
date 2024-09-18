@@ -1,6 +1,7 @@
 import { LayoutUtils } from "../entities/Layout";
 import { INS203_201 } from "../entities/layouts";
 import type { SeatRecord } from "../entities/SeatRecord";
+import { getTranslation } from "./I18n";
 
 export default class SeatTableCreator {
   private static instance: SeatTableCreator;
@@ -12,6 +13,7 @@ export default class SeatTableCreator {
   private constructor() {}
 
   createSeatTableCSV(record: SeatRecord) {
+    const i18n = getTranslation();
     const layout = INS203_201;
     const rowCount = layout.seats.length;
     const colCount = layout.seats[0]!.length;
@@ -53,13 +55,13 @@ export default class SeatTableCreator {
     let csvData = "data:text/csv;charset=utf-8,";
 
     for (let j = 0; j < colCount + 2; j++) {
-      csvData += "上面";
+      csvData += i18n.t("export.up");
       if (j !== colCount + 1) csvData += ",";
     }
     csvData += "\n";
 
     for (let i = 0; i < rowCount; i++) {
-      csvData += "左邊";
+      csvData += i18n.t("export.left");
       for (let j = 0; j < colCount + 2; j++) {
         if (j === 0 || j === colCount + 1) {
         } else {
@@ -67,11 +69,11 @@ export default class SeatTableCreator {
           csvData += `,${id}`;
         }
       }
-      csvData += ",右邊\n";
+      csvData += "," + i18n.t("export.right") + "\n";
     }
 
     for (let j = 0; j < colCount + 2; j++) {
-      csvData += "下面";
+      csvData += i18n.t("export.down");
       if (j !== colCount + 1) csvData += ",";
     }
     csvData += "\n";

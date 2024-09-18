@@ -1,0 +1,145 @@
+export type TranslationType = typeof translation;
+
+export const translation = {
+  locale: "English",
+  localeCode: "en-US",
+  common: {
+    submit: "Submit",
+    cancel: "Cancel",
+    submitSuccess: "Successfully submitted",
+    done: "Done",
+    confirm: "Confirm",
+    goBack: "Go back",
+    create: "Create",
+    update: "Update",
+    emailAddress: "Email address",
+  },
+  home: {
+    title: "Classroom assistant system",
+    tronclass: "Tronclass",
+    classroom: "Head to classroom",
+    about: "About this site",
+  },
+  header: {
+    homeTooltip: "Go to home",
+    nav: {
+      classroom: "Classroom",
+      management: "TA Management",
+      about: "About",
+      logout: "Logout",
+      darkMode: "Dark mode",
+      lightMode: "Light mode",
+      changeLanguage: "Change language",
+    },
+  },
+  classroom: {
+    actions: {
+      enqueue: "Call TA",
+      dequeue: "Cancel",
+      commonQuestions: "Common FAQs",
+      homework: "Homework",
+      reset: "Reset seat",
+      complete: "Complete",
+      manual: "Manual",
+      completeFull: "Complete current demo",
+      manualFull: "Manual demo",
+    },
+    studentNumberRaw: "Student number",
+    studentNumber: "Student number: ",
+    points: "Points",
+    rotation: {
+      rotateSeat: "Rotate seat display",
+      turnClockwise: "Rotate clockwise",
+      turnCounterClockwise: "Rotate counter clockwise",
+    },
+    info: {
+      numberInQueue: "Your order in queue",
+      waitingNumber: "People in queue",
+    },
+    guide: {
+      chooseSeatTitle: "Choose your seat",
+      chooseSeatDescription:
+        "Click the chair icon in the classroom layout to set your seat.",
+      quickSetting: {
+        title: "Quick setting",
+        mainQuestion: "When I am facing my computer, the teacher is on my...?",
+        left: "Left",
+        right: "Right",
+      },
+    },
+    classEnded: {
+      title: "This class has ended",
+      awaiting:
+        "Your are still in the demo queue, please DO NOT close this page before completing your demo.",
+      reminder:
+        "Please remember to save and take your homework with you, and don't forget to turn off the computer before leaving the classroom.",
+      leaveQueue: "Leave queue",
+    },
+  },
+  entity: {
+    door: "Door",
+    seat: {
+      moveHere: "Move to here",
+      moveHereSideway: "Move to here (Sideway seat)",
+      selected: "Current seat",
+      teacher: "Teacher",
+      whiteboard: "Whiteboard",
+      window: "Window",
+    },
+  },
+  management: {
+    loginAs: "Logged-in as: {{email}}",
+    class: {
+      title: "Classes",
+      editClass: "Edit class",
+      created: "Class created successfully!",
+      confirmDelete:
+        "Are you sure you want to delete this class? This operation cannot be reverted.",
+      deleted: "Class deleted.",
+      date: "Date",
+      startAt: "Start at",
+      endAt: "End at",
+      totalPoints: "Points available",
+      homeworkLink: "Homework link",
+      classTime: "Class time",
+      startAtFull: "{{date}} (Starts at: {{time}})",
+      gradeSummary: "Grade summary",
+      selectClass: "Select class",
+      selectClassTime: "Select class time",
+      points: "Points",
+      seatRecords: "Seat records",
+    },
+    ta: {
+      title: "TA settings",
+      errorOccurred: "Error occurred. Please refer to browser console.",
+      newPassword: "New password",
+      updatePassword: "Update password",
+      passwordUpdated: "Password updated successfully, please re-login.",
+      createAccount: "Create account",
+      accountCreated: "Account created successfully, please re-login.",
+      newTAAccount: "Add a TA",
+      defaultPassword: {
+        "1": "*The default password for new account is ",
+        "2": ", please update your password after login.",
+      },
+    },
+  },
+  login: {
+    loginFailed: "Failed to login",
+    loginFailedDesc: "Incorrect email or password",
+    password: "Password",
+    login: "Login",
+    taLogin: "TA Login",
+  },
+  about: {
+    title: "About this site",
+    description: "TA system, assisting in-class demo. Built on React with ❤️",
+  },
+  export: {
+    up: "UP",
+    down: "DOWN",
+    left: "LEFT",
+    right: "RIGHT",
+    download: "Download",
+  },
+};

@@ -2,9 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Space, Title, Flex } from "@mantine/core";
 import { IconBook2, IconInfoCircle, IconSchool } from "@tabler/icons-react";
+import { useTranslation } from "../services/I18n";
 
 export default function Home() {
   const navigate = useNavigate();
+  const i18n = useTranslation();
   return (
     <Flex justify="center" align="center">
       <Flex
@@ -17,7 +19,7 @@ export default function Home() {
         <Card shadow="sm" p="xl" radius="md" withBorder>
           <Card.Section mx="xl">
             <Title order={2} ta="center">
-              課程助教系統
+              {i18n.t("home.title")}
             </Title>
           </Card.Section>
           <Space h="md" />
@@ -35,7 +37,7 @@ export default function Home() {
               fullWidth
               variant="subtle"
             >
-              Tronclass
+              {i18n.t("home.tronclass")}
             </Button>
             <Button
               component="a"
@@ -49,7 +51,7 @@ export default function Home() {
                 navigate("/classroom");
               }}
             >
-              前往教室
+              {i18n.t("home.classroom")}
             </Button>
             <Button
               component="a"
@@ -63,7 +65,7 @@ export default function Home() {
                 navigate("/about");
               }}
             >
-              關於本站
+              {i18n.t("home.about")}
             </Button>
           </Button.Group>
         </Card>

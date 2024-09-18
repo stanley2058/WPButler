@@ -13,6 +13,7 @@ import FirebaseService from "../../services/FirebaseService";
 import { Swal } from "../../services/SweatAlert";
 import withReactContent from "sweetalert2-react-content";
 import { theme } from "../../main";
+import { useTranslation, getTranslation } from "../../services/I18n";
 
 const RSwal = withReactContent(Swal);
 
@@ -33,6 +34,7 @@ function StudentActions(props: {
   actions: IActions;
   data: IData;
 }) {
+  const i18n = useTranslation();
   return (
     <Flex direction="column" gap="0.5rem" align="center" justify="center">
       <Button.Group>
@@ -42,7 +44,7 @@ function StudentActions(props: {
             color="orange"
             onClick={props.actions.cancelCall}
           >
-            取消呼叫
+            {i18n.t("classroom.actions.dequeue")}
           </Button>
         ) : (
           <Button
@@ -50,7 +52,7 @@ function StudentActions(props: {
             color="indigo"
             onClick={props.actions.call}
           >
-            呼叫助教
+            {i18n.t("classroom.actions.enqueue")}
           </Button>
         )}
         <Button
@@ -60,7 +62,7 @@ function StudentActions(props: {
           href="https://hackmd.io/@stanley2058/HJm6o4xEF"
           target="_blank"
         >
-          常見問題
+          {i18n.t("classroom.actions.commonQuestions")}
         </Button>
       </Button.Group>
       <Button.Group variant="contained">
@@ -71,7 +73,7 @@ function StudentActions(props: {
           href={props.data.thisWeekHomeworkUrl || "/"}
           target="_blank"
         >
-          本週作業
+          {i18n.t("classroom.actions.homework")}
         </Button>
         <Button
           leftSection={<IconArrowBackUp />}
@@ -79,7 +81,7 @@ function StudentActions(props: {
           onClick={props.actions.resetSeat}
           disabled={props.isInQueue}
         >
-          重設座位
+          {i18n.t("classroom.actions.reset")}
         </Button>
       </Button.Group>
     </Flex>
@@ -87,6 +89,7 @@ function StudentActions(props: {
 }
 
 function TAActions(props: { waiting?: number; actions: IActions }) {
+  const i18n = useTranslation();
   return (
     <Flex direction="column" gap="0.5rem" align="center" justify="center">
       <Button.Group>
@@ -96,7 +99,7 @@ function TAActions(props: { waiting?: number; actions: IActions }) {
           onClick={() => fireCompleteDemoDialog(props.actions)}
           disabled={!props.waiting || props.waiting === 0}
         >
-          完成目前
+          {i18n.t("classroom.actions.complete")}
         </Button>
         <Button
           leftSection={<IconPencil />}
@@ -105,7 +108,7 @@ function TAActions(props: { waiting?: number; actions: IActions }) {
             fireCompleteDemoDialog(props.actions, true);
           }}
         >
-          手動Demo
+          {i18n.t("classroom.actions.manual")}
         </Button>
       </Button.Group>
     </Flex>
@@ -118,6 +121,7 @@ function DemoDialog(props: {
   maxPoints?: number;
   actions: IActions;
 }) {
+  const i18n = useTranslation();
   const [points, setPoints] = useState(0);
   const [id, setId] = useState(props.id);
   const handleChange = (val: string | null) => {
@@ -142,20 +146,23 @@ function DemoDialog(props: {
     <Flex direction="column" gap="0.5rem" align="center">
       {props.manual ? (
         <Input
-          placeholder="學號"
+          placeholder={i18n.t("classroom.studentNumberRaw")}
           required
           variant="filled"
           onChange={handleIdChange}
         />
       ) : (
-        <h3>學號：{props.id}</h3>
+        <h3>
+          {i18n.t("classroom.studentNumber")}
+          {props.id}
+        </h3>
       )}
       <Select
         w="6rem"
         comboboxProps={{ zIndex: 1070 }}
         checkIconPosition="right"
         id="number-select"
-        label="題數"
+        label={i18n.t("classroom.points")}
         value={points.toString()}
         onChange={handleChange}
         data={[
@@ -166,10 +173,10 @@ function DemoDialog(props: {
       />
       <Flex direction="row" gap="2rem" mt="1rem">
         <Button color="red" onClick={() => RSwal.clickCancel()}>
-          取消
+          {i18n.t("common.cancel")}
         </Button>
         <Button color="indigo" onClick={submitPoints}>
-          送出
+          {i18n.t("common.submit")}
         </Button>
       </Flex>
     </Flex>
@@ -182,9 +189,12 @@ async function fireCompleteDemoDialog(
 ) {
   const id = FirebaseService.Instance.currentAvailableStudent?.id;
   const maxPoints = FirebaseService.Instance.currentClassTime?.maxPoints;
+  const i18n = getTranslation();
 
   const res = await RSwal.fire({
-    title: manual ? "手動Demo" : "完成目前Demo",
+    title: manual
+      ? i18n.t("classroom.actions.manualFull")
+      : i18n.t("classroom.actions.completeFull"),
     html: (
       <MantineProvider theme={theme}>
         <DemoDialog
@@ -199,7 +209,7 @@ async function fireCompleteDemoDialog(
   });
   if (res.isConfirmed)
     await RSwal.fire({
-      title: "成功送出",
+      title: i18n.t("common.submitSuccess"),
       icon: "success",
     });
 }

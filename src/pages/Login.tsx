@@ -3,16 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Button, Input, Card, Title, Flex } from "@mantine/core";
 import FirebaseService from "../services/FirebaseService";
 import { Swal } from "../services/SweatAlert";
+import { getTranslation, useTranslation } from "../services/I18n";
 
 function fireError() {
+  const i18n = getTranslation();
   return Swal.fire({
     icon: "error",
-    title: "登入失敗",
-    text: "帳號或密碼錯誤",
+    title: i18n.t("login.loginFailed"),
+    text: i18n.t("login.loginFailedDesc"),
   });
 }
 
 export default function Login() {
+  const i18n = useTranslation();
   const navigate = useNavigate();
   (async () => {
     if (await FirebaseService.Instance.hasLogin) navigate("/settings");
@@ -44,30 +47,30 @@ export default function Login() {
           onSubmit={(e) => login(e)}
           gap="0.5rem"
         >
-          <Title order={3}>助教登入</Title>
-          <Input.Wrapper label="信箱*">
+          <Title order={3}>{i18n.t("login.taLogin")}</Title>
+          <Input.Wrapper label={`${i18n.t("common.emailAddress")}*`}>
             <Input
               ref={emailRef}
               required
               variant="filled"
-              placeholder="信箱"
+              placeholder={i18n.t("common.emailAddress")}
               type="email"
               name="email"
             />
           </Input.Wrapper>
-          <Input.Wrapper label="密碼*">
+          <Input.Wrapper label={`${i18n.t("login.password")}*`}>
             <Input
               ref={passwordRef}
               required
               variant="filled"
-              placeholder="密碼"
+              placeholder={i18n.t("login.password")}
               type="password"
               name="password"
             />
           </Input.Wrapper>
           <Flex justify="center" align="center" mt="1rem">
             <Button color="indigo" type="submit">
-              登入
+              {i18n.t("login.login")}
             </Button>
           </Flex>
         </Flex>

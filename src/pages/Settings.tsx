@@ -6,6 +6,7 @@ import ClassSessionCreator from "../components/Settings/ClassSessionCreator";
 import GradeSum from "../components/Settings/GradeSum";
 import TASettings from "../components/Settings/TASettings";
 import SeatRecord from "../components/Settings/SeatRecord";
+import { useTranslation } from "../services/I18n";
 
 function CustomAccordion(props: PropsWithChildren<{ title: string }>) {
   return (
@@ -23,6 +24,7 @@ function CustomAccordion(props: PropsWithChildren<{ title: string }>) {
 }
 
 export default function Settings() {
+  const i18n = useTranslation();
   const [loginEmail, setLoginEmail] = useState("");
 
   const navigate = useNavigate();
@@ -37,33 +39,33 @@ export default function Settings() {
     <Flex my="2rem" justify="center" align="center">
       <Container mx="1rem" w="clamp(50%, 40em, 90%)">
         <Title order={3} mt="0.5rem" mb="2rem">
-          目前登入：{loginEmail}
+          {i18n.t("management.loginAs", { email: loginEmail })}
         </Title>
 
         <Title order={4} mt="1rem" mb="0.2rem">
-          課程相關
+          {i18n.t("management.class.title")}
         </Title>
 
         <Accordion>
-          <CustomAccordion title="編輯課程">
+          <CustomAccordion title={i18n.t("management.class.editClass")}>
             <ClassSessionCreator />
           </CustomAccordion>
 
-          <CustomAccordion title="成績統計">
+          <CustomAccordion title={i18n.t("management.class.gradeSummary")}>
             <GradeSum />
           </CustomAccordion>
 
-          <CustomAccordion title="座位記錄">
+          <CustomAccordion title={i18n.t("management.class.seatRecords")}>
             <SeatRecord />
           </CustomAccordion>
         </Accordion>
 
         <Title order={4} mt="1rem" mb="0.2rem">
-          助教設定
+          {i18n.t("management.ta.title")}
         </Title>
 
         <Accordion>
-          <CustomAccordion title="助教設定">
+          <CustomAccordion title={i18n.t("management.ta.title")}>
             <TASettings />
           </CustomAccordion>
         </Accordion>

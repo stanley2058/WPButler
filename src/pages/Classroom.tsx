@@ -12,6 +12,7 @@ import ClassroomUtils, {
   type ClassroomState,
 } from "../services/ClassroomUtils";
 import { LayoutUtils } from "../entities/Layout";
+import { getTranslation } from "../services/I18n";
 
 const layouts = [
   { name: INS203_201.id, layout: INS203_201 },
@@ -240,20 +241,22 @@ export default function Classroom() {
 }
 
 function fireClassEndAwaitingDemoNotice() {
+  const i18n = getTranslation();
   return Swal.fire({
     icon: "info",
-    title: "課程時間已結束",
-    text: "Demo尚在等待佇列中，在完成Demo前請勿關閉本頁。",
+    title: i18n.t("classroom.classEnded.title"),
+    text: i18n.t("classroom.classEnded.awaiting"),
     allowOutsideClick: false,
     confirmButtonColor: "red",
-    confirmButtonText: "離開佇列",
+    confirmButtonText: i18n.t("classroom.classEnded.leaveQueue"),
   });
 }
 
 function fireClassEndNotice() {
+  const i18n = getTranslation();
   return Swal.fire({
     icon: "info",
-    title: "課程時間已結束",
-    text: "請將作業保存帶走，並在離開教室前關閉電腦。",
+    title: i18n.t("classroom.classEnded.title"),
+    text: i18n.t("classroom.classEnded.reminder"),
   });
 }

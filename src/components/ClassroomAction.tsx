@@ -1,9 +1,10 @@
 import React from "react";
-import { Flex, Text, useComputedColorScheme } from "@mantine/core";
+import { Flex, Text, useComputedColorScheme, Space } from "@mantine/core";
 import Actions from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";
 import type { IActions, IData } from "./Classroom/Actions";
+import { useTranslation } from "../services/I18n";
 
 export default function ClassroomAction(props: {
   info?: { id: string };
@@ -14,6 +15,7 @@ export default function ClassroomAction(props: {
   actions: IActions;
   data: IData;
 }) {
+  const i18n = useTranslation();
   const colorScheme = useComputedColorScheme();
   return (
     <Flex p="0.1rem" direction="column">
@@ -30,8 +32,9 @@ export default function ClassroomAction(props: {
           {!props.hasLogin && (
             <>
               <Text fw="bold" inline>
-                學號：
+                {i18n.t("classroom.studentNumberRaw")}
               </Text>
+              <Space w="xs" />
               <Text
                 ff="monospace"
                 c={colorScheme === "light" ? "orange.9" : "orange.2"}

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Flex, Select, Text } from "@mantine/core";
 import type ClassTime from "../../entities/ClassTime";
 import FirebaseService from "../../services/FirebaseService";
+import { useTranslation } from "../../services/I18n";
 
 export default function GradeSum() {
+  const i18n = useTranslation();
   const [classTimeList, setClassTimeList] = useState<
     { time: ClassTime; id: string }[]
   >([]);
@@ -46,17 +48,24 @@ export default function GradeSum() {
   return (
     <Flex direction="column" gap="1rem">
       <Select
-        placeholder="選擇課程時間"
+        placeholder={i18n.t("management.class.selectClassTime")}
         checkIconPosition="right"
         w="100%"
-        label="課程選擇"
+        label={i18n.t("management.class.selectClass")}
         id="class-select"
         value={classId}
         onChange={(v) => {
           if (v) setClassId(v);
         }}
         data={classTimeList.map((classTime) => ({
-          label: `${classTime.time.start.toDate().toLocaleString("zh-TW")} (開始時間)`,
+          label: i18n.t("management.class.startAtFull", {
+            date: classTime.time.start
+              .toDate()
+              .toLocaleDateString(i18n.t("localeCode")),
+            time: classTime.time.start
+              .toDate()
+              .toLocaleTimeString(i18n.t("localeCode")),
+          }),
           value: classTime.id,
         }))}
       />
@@ -66,11 +75,11 @@ export default function GradeSum() {
             <tr>
               <th>
                 <Text fw="bold" w="8rem">
-                  學號
+                  {i18n.t("classroom.studentNumberRaw")}
                 </Text>
               </th>
               <th>
-                <Text fw="bold">題數</Text>
+                <Text fw="bold">{i18n.t("management.class.points")}</Text>
               </th>
             </tr>
           </thead>

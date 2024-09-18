@@ -3,8 +3,10 @@ import { Button, Select, Flex } from "@mantine/core";
 import FirebaseService from "../../services/FirebaseService";
 import SeatTableCreator from "../../services/SeatTableCreator";
 import type { SeatRecord as SeatRecordType } from "../../entities/SeatRecord";
+import { useTranslation } from "../../services/I18n";
 
 export default function SeatRecord() {
+  const i18n = useTranslation();
   const [records, setRecords] = useState<SeatRecordType[]>([]);
   const [selectedIndex, setSelectedIndex] = useState("");
 
@@ -34,20 +36,23 @@ export default function SeatRecord() {
       <Select
         w="100%"
         id="class-select"
-        label="課程選擇"
-        placeholder="選擇課程時間"
+        label={i18n.t("management.class.selectClass")}
+        placeholder={i18n.t("management.class.selectClassTime")}
         checkIconPosition="right"
         value={selectedIndex}
         onChange={(v) => {
           if (v) setSelectedIndex(v);
         }}
         data={records.map((r, index) => ({
-          label: `${r.classTime.toDate().toLocaleDateString("zh-TW")} (${r.classTime.toDate().toLocaleTimeString("zh-TW")} 開始)`,
+          label: i18n.t("management.class.startAtFull", {
+            date: r.classTime.toDate().toLocaleDateString(i18n.t("localeCode")),
+            time: r.classTime.toDate().toLocaleTimeString(i18n.t("localeCode")),
+          }),
           value: `${index}`,
         }))}
       />
       <Button color="indigo" onClick={() => download()}>
-        下載
+        {i18n.t("export.download")}
       </Button>
     </Flex>
   );

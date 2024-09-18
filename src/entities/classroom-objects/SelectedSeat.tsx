@@ -1,12 +1,14 @@
 import React, { forwardRef } from "react";
 import { Tooltip, ThemeIcon } from "@mantine/core";
 import { IconUserPin } from "@tabler/icons-react";
+import { useTranslation } from "../../services/I18n";
 
 export default function SelectedSeat(props: { hasLogin?: boolean }) {
+  const i18n = useTranslation();
   if (props.hasLogin) return <PersonPin color="indigo" />;
   return (
     <span style={{ cursor: "help" }}>
-      <Tooltip label="現在的座位">
+      <Tooltip label={i18n.t("entity.seat.selected")}>
         <PersonPin color="indigo" />
       </Tooltip>
     </span>

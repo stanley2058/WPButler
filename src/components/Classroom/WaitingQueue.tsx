@@ -1,6 +1,7 @@
 import React from "react";
 import { Tooltip, Indicator, ThemeIcon, Flex } from "@mantine/core";
 import { IconUsers, IconUsersGroup } from "@tabler/icons-react";
+import { useTranslation } from "../../services/I18n";
 
 export default function WaitingQueue(props: {
   hasLogin?: boolean;
@@ -8,11 +9,12 @@ export default function WaitingQueue(props: {
   waiting?: number;
 }) {
   const currentOrder = (props.queue ?? -1) + 1;
+  const i18n = useTranslation();
   return (
     <Flex justify="center" align="center">
       <Flex justify="space-evenly" maw="10rem" w="100%" gap="sm">
         {!props.hasLogin && (
-          <Tooltip label="目前順位">
+          <Tooltip label={i18n.t("classroom.info.numberInQueue")}>
             <Indicator
               inline
               position="bottom-end"
@@ -31,7 +33,7 @@ export default function WaitingQueue(props: {
             </Indicator>
           </Tooltip>
         )}
-        <Tooltip label="目前等待人數">
+        <Tooltip label={i18n.t("classroom.info.waitingNumber")}>
           <Indicator
             inline
             position="bottom-end"

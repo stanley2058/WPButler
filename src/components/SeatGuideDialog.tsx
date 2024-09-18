@@ -2,11 +2,13 @@ import React, { useState, type ChangeEvent } from "react";
 import { Flex, Modal, Text, Input, Button } from "@mantine/core";
 import { Swal } from "../services/SweatAlert";
 import ClassroomUtils from "../services/ClassroomUtils";
+import { useTranslation } from "../services/I18n";
 
 export default function SeatGuideDialog(props: {
   open: boolean;
   onClose: (id: string, rotation: number) => void;
 }) {
+  const i18n = useTranslation();
   const [state, setState] = useState<{
     isLeft?: boolean;
     isOpen: boolean;
@@ -31,8 +33,8 @@ export default function SeatGuideDialog(props: {
     setState({ ...state, isOpen: false });
     await Swal.fire({
       icon: "info",
-      title: "選擇座位",
-      text: "點選教室平面圖上面的座位來設定目前的位子。",
+      title: i18n.t("classroom.guide.chooseSeatTitle"),
+      text: i18n.t("classroom.guide.chooseSeatDescription"),
     });
     props.onClose(state.id, state.isLeft ? 0 : 2);
   };
@@ -60,13 +62,20 @@ export default function SeatGuideDialog(props: {
     <Modal
       opened={state.isOpen}
       onClose={onClose}
-      title="快速設定"
+      title={i18n.t("classroom.guide.quickSetting.title")}
       withCloseButton={false}
       centered
     >
       <Flex direction="column" gap="1rem">
-        <Input w="100%" required placeholder="學號" onChange={onIdChange} />
-        <Text ta="center">電腦在我的前面的話，老師坐在我的...？</Text>
+        <Input
+          w="100%"
+          required
+          placeholder={i18n.t("classroom.studentNumberRaw")}
+          onChange={onIdChange}
+        />
+        <Text ta="center">
+          {i18n.t("classroom.guide.quickSetting.mainQuestion")}
+        </Text>
         <Button.Group w="100%">
           <Button
             w="50%"
@@ -76,7 +85,7 @@ export default function SeatGuideDialog(props: {
               chooseTeacherPosition(true);
             }}
           >
-            左邊
+            {i18n.t("classroom.guide.quickSetting.left")}
           </Button>
           <Button
             w="50%"
@@ -86,7 +95,7 @@ export default function SeatGuideDialog(props: {
               chooseTeacherPosition(false);
             }}
           >
-            右邊
+            {i18n.t("classroom.guide.quickSetting.right")}
           </Button>
         </Button.Group>
         <Flex justify="center">
@@ -95,7 +104,7 @@ export default function SeatGuideDialog(props: {
             color="indigo"
             onClick={onClose}
           >
-            完成
+            {i18n.t("common.done")}
           </Button>
         </Flex>
       </Flex>
