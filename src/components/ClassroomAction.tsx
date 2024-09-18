@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "@mantine/core";
+import { Flex, Text, useComputedColorScheme } from "@mantine/core";
 import Actions from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";
@@ -14,6 +14,7 @@ export default function ClassroomAction(props: {
   actions: IActions;
   data: IData;
 }) {
+  const colorScheme = useComputedColorScheme();
   return (
     <Flex p="0.1rem" direction="column">
       <Flex
@@ -31,7 +32,11 @@ export default function ClassroomAction(props: {
               <Text fw="bold" inline>
                 學號：
               </Text>
-              <Text c="gray" inline>
+              <Text
+                ff="monospace"
+                c={colorScheme === "light" ? "orange.9" : "orange.2"}
+                inline
+              >
                 {props.info?.id || ""}
               </Text>
             </>

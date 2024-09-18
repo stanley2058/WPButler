@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Code, Flex, Input, Text } from "@mantine/core";
 import FirebaseService from "../../services/FirebaseService";
-import Swal from "sweetalert2";
+import { Swal } from "../../services/SweatAlert";
 
 export default function TASettings() {
   const navigate = useNavigate();

@@ -1,8 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, Button, Space, Title, Flex } from "@mantine/core";
 import { IconBook2, IconInfoCircle, IconSchool } from "@tabler/icons-react";
 
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <Flex justify="center" align="center">
       <Flex
@@ -42,6 +44,10 @@ export default function Home() {
               leftSection={<IconBook2 />}
               variant="subtle"
               fullWidth
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/classroom");
+              }}
             >
               前往教室
             </Button>
@@ -52,6 +58,10 @@ export default function Home() {
               leftSection={<IconInfoCircle />}
               variant="subtle"
               fullWidth
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/about");
+              }}
             >
               關於本站
             </Button>

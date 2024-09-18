@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import FirebaseService from "../../services/FirebaseService";
 import type ClassTime from "../../entities/ClassTime";
-import Swal from "sweetalert2";
+import { Swal } from "../../services/SweatAlert";
 import {
   Input,
   Button,
@@ -146,8 +146,7 @@ export default function ClassSessionCreator() {
             order={6}
             pos="sticky"
             top={0}
-            bg="white"
-            style={{ zIndex: 1 }}
+            style={{ zIndex: 1, backgroundColor: "var(--mantine-color-body)" }}
           >
             已預訂時間
           </Title>

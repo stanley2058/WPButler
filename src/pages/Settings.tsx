@@ -11,7 +11,7 @@ function CustomAccordion(props: PropsWithChildren<{ title: string }>) {
   return (
     <Accordion.Item key={props.title} value={props.title}>
       <Accordion.Control>
-        <Text fw="500" c="dark">
+        <Text fw="500" c="subtle">
           {props.title}
         </Text>
       </Accordion.Control>

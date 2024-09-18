@@ -9,7 +9,7 @@ export default function Seat(props: {
   color: number;
   clickable?: boolean;
 }) {
-  const displayColor = props.color === 1 ? "dark" : "grape";
+  const displayColor = props.color === 1 ? "gray" : "grape";
   const tooltipText =
     props.color === 1 ? "移動到這裡" : "移動到這裡 (橫向座位)";
 

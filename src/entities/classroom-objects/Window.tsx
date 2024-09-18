@@ -1,18 +1,10 @@
 import React from "react";
+import { Flex } from "@mantine/core";
 
 export default function Window() {
   return (
-    <div
-      style={{
-        backgroundColor: "lightskyblue",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        placeItems: "center",
-      }}
-    >
+    <Flex justify="center" align="center" w="100%" h="100%" bg="blue">
       窗戶
-    </div>
+    </Flex>
   );
 }

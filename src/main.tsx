@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AppShell, createTheme, MantineProvider } from "@mantine/core";
+import {
+  AppShell,
+  createTheme,
+  MantineProvider,
+  useComputedColorScheme,
+} from "@mantine/core";
 import Home from "./pages/Home";
 import Classroom from "./pages/Classroom";
 import About from "./pages/About";
@@ -12,11 +17,13 @@ import Header from "./components/Header";
 import "@mantine/core/styles.css";
 import "./index.css";
 
-export const theme = createTheme({});
+export const theme = createTheme({
+  primaryColor: "indigo",
+});
 
 const root = createRoot(document.getElementById("root")!);
 root.render(
-  <MantineProvider theme={theme} forceColorScheme="light">
+  <MantineProvider theme={theme}>
     <AppShell header={{ height: 60 }} padding="sm">
       <Router>
         <Header />
@@ -31,5 +38,26 @@ root.render(
         </AppShell.Main>
       </Router>
     </AppShell>
+    <SwalTheme />
   </MantineProvider>,
 );
+
+function SwalTheme() {
+  const prevTheme = useRef<"dark" | "light" | null>(null);
+  const colorScheme = useComputedColorScheme();
+  if (prevTheme.current !== colorScheme) {
+    prevTheme.current = colorScheme;
+    handleSweetalertTheme(colorScheme);
+    console.log("swal theme loaded");
+  }
+  return null;
+}
+function handleSweetalertTheme(theme: "dark" | "light") {
+  const style = document.getElementById("sweetalert-theme") as HTMLLinkElement;
+  const url = `https://cdn.jsdelivr.net/npm/@sweetalert2/${
+    theme === "dark"
+      ? "theme-dark/dark.min.css"
+      : "theme-default/default.min.css"
+  }`;
+  style.href = url;
+}

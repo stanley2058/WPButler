@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Flex } from "@mantine/core";
-import Swal from "sweetalert2";
+import { Swal } from "../services/SweatAlert";
 import ClassroomAction from "../components/ClassroomAction";
 import ClassroomLayout from "../components/ClassroomLayout";
 import { INS201, INS203, INS203_201 } from "../entities/layouts";

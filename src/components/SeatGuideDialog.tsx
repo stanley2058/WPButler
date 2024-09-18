@@ -1,6 +1,6 @@
 import React, { useState, type ChangeEvent } from "react";
 import { Flex, Modal, Text, Input, Button } from "@mantine/core";
-import Swal from "sweetalert2";
+import { Swal } from "../services/SweatAlert";
 import ClassroomUtils from "../services/ClassroomUtils";
 
 export default function SeatGuideDialog(props: {

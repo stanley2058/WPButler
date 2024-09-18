@@ -84,6 +84,8 @@ export default function ClassroomLayout(props: {
           <Flex
             direction="column"
             p="1rem"
+            justify="space-evenly"
+            h="100%"
             style={{ width: "fit-content", minWidth: "100%" }}
           >
             {props.layout.seats.map((row, id) => (

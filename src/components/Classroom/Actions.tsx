@@ -10,7 +10,7 @@ import {
   IconPencil,
 } from "@tabler/icons-react";
 import FirebaseService from "../../services/FirebaseService";
-import Swal from "sweetalert2";
+import { Swal } from "../../services/SweatAlert";
 import withReactContent from "sweetalert2-react-content";
 import { theme } from "../../main";
 
@@ -186,7 +186,7 @@ async function fireCompleteDemoDialog(
   const res = await RSwal.fire({
     title: manual ? "手動Demo" : "完成目前Demo",
     html: (
-      <MantineProvider theme={theme} forceColorScheme="light">
+      <MantineProvider theme={theme}>
         <DemoDialog
           manual={manual}
           id={id}
