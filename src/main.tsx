@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { lazy, Suspense, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
@@ -7,16 +7,17 @@ import {
   MantineProvider,
   useComputedColorScheme,
 } from "@mantine/core";
-import Home from "./pages/Home";
-import Classroom from "./pages/Classroom";
-import About from "./pages/About";
-import Settings from "./pages/Settings";
-import Login from "./pages/Login";
 import Header from "./components/Header";
 import { LocaleContextProvider } from "./services/I18n";
 
 import "@mantine/core/styles.css";
 import "./index.css";
+
+const Home = lazy(() => import("./pages/Home"));
+const Classroom = lazy(() => import("./pages/Classroom"));
+const Settings = lazy(() => import("./pages/Settings"));
+const About = lazy(() => import("./pages/About"));
+const Login = lazy(() => import("./pages/Login"));
 
 export const theme = createTheme({
   primaryColor: "indigo",
@@ -30,13 +31,15 @@ root.render(
         <Router>
           <Header />
           <AppShell.Main mt="-60px">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/classroom/*" element={<Classroom />} />
-              <Route path="/settings/*" element={<Settings />} />
-              <Route path="/about/*" element={<About />} />
-              <Route path="/login/*" element={<Login />} />
-            </Routes>
+            <Suspense fallback={null}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/classroom/*" element={<Classroom />} />
+                <Route path="/settings/*" element={<Settings />} />
+                <Route path="/about/*" element={<About />} />
+                <Route path="/login/*" element={<Login />} />
+              </Routes>
+            </Suspense>
           </AppShell.Main>
         </Router>
       </AppShell>

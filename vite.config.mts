@@ -120,4 +120,5 @@ export default defineConfig({
       },
     }),
   ],
+  esbuild: { legalComments: "external" },
 });
