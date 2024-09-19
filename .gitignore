@@ -4,4 +4,8 @@ dist
 dist-ssr
 *.local
 Config.ts
+Config.*.ts
 .firebase
+.firebaserc
+firestore.rules
+firestore.indexes

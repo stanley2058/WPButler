@@ -1,28 +1,13 @@
 import React, { useState } from "react";
-import { makeStyles } from "@mui/styles";
-import { Button, TextField, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Button, Code, Flex, Input, Text } from "@mantine/core";
 import FirebaseService from "../../services/FirebaseService";
-import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
+import { Swal } from "../../services/SweatAlert";
+import { useTranslation } from "../../services/I18n";
 
-const useStyles = makeStyles(() => ({
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: ".5em",
-  },
-  mono: {
-    fontFamily: "monospace",
-    backgroundColor: "lightgray",
-    marginLeft: "2px",
-    marginRight: "2px",
-    paddingLeft: "2px",
-    paddingRight: "2px",
-  },
-}));
 export default function TASettings() {
-  const history = useHistory();
-  const classes = useStyles();
+  const i18n = useTranslation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [newPasswd, setNewPasswd] = useState("");
 
@@ -31,17 +16,17 @@ export default function TASettings() {
       await FirebaseService.Instance.changePassword(newPasswd);
       await Swal.fire({
         icon: "success",
-        title: "更新密碼",
-        text: "成功更新密碼，請重新登入。",
+        title: i18n.t("management.ta.updatePassword"),
+        text: i18n.t("management.ta.passwordUpdated"),
       });
       await FirebaseService.Instance.signOut();
-      history.push("/login");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       await Swal.fire({
         icon: "error",
-        title: "更新密碼",
-        text: "發生錯誤，請參考瀏覽器Console。",
+        title: i18n.t("management.ta.updatePassword"),
+        text: i18n.t("management.ta.errorOccurred"),
       });
     }
   };
@@ -50,76 +35,68 @@ export default function TASettings() {
       await FirebaseService.Instance.createAccount(email);
       await Swal.fire({
         icon: "success",
-        title: "建立帳號",
-        text: "成功建立新助教帳號，請重新登入。",
+        title: i18n.t("management.ta.createAccount"),
+        text: i18n.t("management.ta.accountCreated"),
       });
       await FirebaseService.Instance.signOut();
-      history.push("/login");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       await Swal.fire({
         icon: "error",
-        title: "建立帳號",
-        text: "發生錯誤，請參考瀏覽器Console。",
+        title: i18n.t("management.ta.createAccount"),
+        text: i18n.t("management.ta.errorOccurred"),
       });
     }
   };
 
   return (
-    <div>
-      <Typography variant="h6" sx={{ fontSize: ".9em", marginBottom: ".5em" }}>
-        更新密碼
-      </Typography>
-
+    <Flex direction="column" gap="1rem">
       <form
-        className={classes.form}
         onSubmit={(e) => {
           e.preventDefault();
           updatePassed();
         }}
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
       >
-        <TextField
-          required
-          label="新密碼"
-          type="password"
-          value={newPasswd}
-          onChange={(e) => setNewPasswd(e.target.value)}
-        />
-        <Button variant="contained" color="error" type="submit">
-          更新
+        <Input.Wrapper label={i18n.t("management.ta.updatePassword")}>
+          <Input
+            required
+            placeholder={i18n.t("management.ta.newPassword")}
+            type="password"
+            value={newPasswd}
+            onChange={(e) => setNewPasswd(e.target.value)}
+          />
+        </Input.Wrapper>
+        <Button color="red" type="submit">
+          {i18n.t("common.update")}
         </Button>
       </form>
-
-      <Typography
-        variant="h6"
-        sx={{ fontSize: ".9em", marginTop: "3em", marginBottom: ".5em" }}
-      >
-        新增助教
-      </Typography>
       <form
-        className={classes.form}
         onSubmit={(e) => {
           e.preventDefault();
           addAccount();
         }}
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
       >
-        <TextField
-          required
-          label="信箱"
-          type="email"
-          value={email}
-          onChange={(em) => setEmail(em.target.value)}
-        />
-        <Button variant="contained" color="primary" type="submit">
-          新增
+        <Input.Wrapper label={i18n.t("management.ta.newTAAccount")}>
+          <Input
+            required
+            placeholder={i18n.t("common.emailAddress")}
+            type="email"
+            value={email}
+            onChange={(em) => setEmail(em.target.value)}
+          />
+        </Input.Wrapper>
+        <Button color="indigo" type="submit">
+          {i18n.t("common.create")}
         </Button>
-        <Typography variant="caption">
-          <i>
-            *新帳號預設密碼為<span className={classes.mono}>soselab401</span>
-            登入後請自行更新密碼。
-          </i>
-        </Typography>
+        <Text fs="italic" fz="sm">
+          {i18n.t("management.ta.defaultPassword.1")}
+          <Code>soselab401</Code>
+          {i18n.t("management.ta.defaultPassword.2")}
+        </Text>
       </form>
-    </div>
+    </Flex>
   );
 }

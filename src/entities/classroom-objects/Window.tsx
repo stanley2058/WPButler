@@ -1,18 +1,12 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
-
-const useStyles = makeStyles(() => ({
-  root: {
-    backgroundColor: "lightskyblue",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    placeItems: "center",
-  },
-}));
+import { Flex } from "@mantine/core";
+import { useTranslation } from "../../services/I18n";
 
 export default function Window() {
-  const classes = useStyles();
-  return <div className={classes.root}>窗戶</div>;
+  const i18n = useTranslation();
+  return (
+    <Flex justify="center" align="center" w="100%" h="100%" bg="blue">
+      {i18n.t("entity.seat.window")}
+    </Flex>
+  );
 }

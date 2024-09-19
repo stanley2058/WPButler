@@ -1,23 +1,10 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
-import Actions, { IActions } from "./Classroom/Actions";
+import { Flex, Text, useComputedColorScheme, Space } from "@mantine/core";
+import Actions from "./Classroom/Actions";
 import RotationControls from "./Classroom/RotationControls";
 import WaitingQueue from "./Classroom/WaitingQueue";
-
-const useStyles = makeStyles(() => ({
-  root: {
-    padding: ".1em",
-    display: "flex",
-    flexDirection: "column",
-  },
-  info: {
-    marginBottom: ".7em",
-    textAlign: "center",
-  },
-  idNumber: {
-    color: "green",
-  },
-}));
+import type { IActions, IData } from "./Classroom/Actions";
+import { useTranslation } from "../services/I18n";
 
 export default function ClassroomAction(props: {
   info?: { id: string };
@@ -26,33 +13,52 @@ export default function ClassroomAction(props: {
   hasLogin?: boolean;
   onRotate: (clockwise: boolean) => void;
   actions: IActions;
+  data: IData;
 }) {
-  const classes = useStyles();
-
+  const i18n = useTranslation();
+  const colorScheme = useComputedColorScheme();
   return (
-    <div className={classes.root}>
-      <div className={classes.info}>
-        <div>
+    <Flex p="0.1rem" direction="column">
+      <Flex
+        direction="column"
+        gap="0.5rem"
+        justify="center"
+        align="center"
+        mb="0.8rem"
+        p="0.5rem"
+        ta="center"
+      >
+        <Flex direction="row">
           {!props.hasLogin && (
-            <b>
-              學號：
-              <span className={classes.idNumber}>{props.info?.id || ""}</span>
-            </b>
+            <>
+              <Text fw="bold" inline>
+                {i18n.t("classroom.studentNumberRaw")}
+              </Text>
+              <Space w="xs" />
+              <Text
+                ff="monospace"
+                c={colorScheme === "light" ? "orange.9" : "orange.2"}
+                inline
+              >
+                {props.info?.id || ""}
+              </Text>
+            </>
           )}
-        </div>
+        </Flex>
         <WaitingQueue
           hasLogin={props.hasLogin}
           waiting={props.waiting}
           queue={props.queue}
         />
-      </div>
+      </Flex>
       <Actions
         hasLogin={props.hasLogin}
         actions={props.actions}
         isInQueue={props.queue !== -1}
         waiting={props.waiting}
+        data={props.data}
       />
       <RotationControls onRotate={props.onRotate} />
-    </div>
+    </Flex>
   );
 }

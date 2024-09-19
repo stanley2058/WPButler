@@ -1,142 +1,213 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  AppShell,
+  Burger,
+  Title,
+  Text,
   Tooltip,
-} from "@mui/material";
-import { Class, Info, Settings, ExitToApp } from "@mui/icons-material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { makeStyles } from "@mui/styles";
+  Drawer,
+  Group,
+  Button,
+  ThemeIcon,
+  Flex,
+  Space,
+  useMantineColorScheme,
+  useComputedColorScheme,
+  ActionIcon,
+  Popover,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import FirebaseService from "../services/FirebaseService";
+import {
+  IconBook2,
+  IconCheck,
+  IconInfoCircle,
+  IconLanguage,
+  IconLogout,
+  IconMoonStars,
+  IconSettings,
+  IconSun,
+} from "@tabler/icons-react";
+import { supportedLocales, useLocale, useTranslation } from "../services/I18n";
 
-const useStyles = makeStyles(() => ({
-  root: { flexGrow: 1 },
-  menuButton: { marginRight: "1em" },
-  title: {
-    cursor: "pointer",
+const entries = [
+  {
+    nameKey: "header.nav.classroom",
+    path: "/classroom",
+    icon: <IconBook2 />,
   },
-  list: { width: 200 },
-}));
+  {
+    nameKey: "header.nav.management",
+    path: "/settings",
+    icon: <IconSettings />,
+  },
+  {
+    nameKey: "header.nav.about",
+    path: "/about",
+    icon: <IconInfoCircle />,
+  },
+] as const;
 
 export default function Header() {
-  const classes = useStyles();
-  const history = useHistory();
-  const [state, setState] = useState<{ open: boolean; hasLogin?: boolean }>({
-    open: false,
-  });
-  useEffect(() => {
-    const unSub = FirebaseService.Instance.onAuthStateChanged((hasLogin) => {
-      if (hasLogin !== state.hasLogin) {
-        setState({
-          ...state,
-          hasLogin,
-        });
-      }
-    });
-    return unSub;
-  }, []);
-
-  const entries = [
-    {
-      name: "教室",
-      path: "/classroom",
-      icon: <Class />,
-    },
-    {
-      name: "助教管理",
-      path: "/settings",
-      icon: <Settings />,
-    },
-    {
-      name: "關於本站",
-      path: "/about",
-      icon: <Info />,
-    },
-  ];
-
-  const toggleDrawer = (open: boolean) => () => {
-    setState({ ...state, open });
-  };
-
-  const list = (
-    <div
-      className={classes.list}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <List>
-        {entries.map((entry) => (
-          <ListItem
-            button
-            component="a"
-            key={entry.name}
-            onClick={() => {
-              history.push(entry.path);
-            }}
-          >
-            <ListItemIcon>{entry.icon}</ListItemIcon>
-            <ListItemText primary={entry.name} />
-          </ListItem>
-        ))}
-        {state.hasLogin && (
-          <ListItem
-            button
-            component="a"
-            key="logout"
-            onClick={async () => {
-              await FirebaseService.Instance.signOut();
-              history.push("/");
-            }}
-          >
-            <ListItemIcon>
-              <ExitToApp />
-            </ListItemIcon>
-            <ListItemText primary="登出" />
-          </ListItem>
-        )}
-      </List>
-    </div>
-  );
+  const navigate = useNavigate();
+  const [hasLogin, setLogin] = useState(false);
+  const [opened, { toggle }] = useDisclosure();
+  const i18n = useTranslation();
+  useEffect(() => FirebaseService.Instance.onAuthStateChanged(setLogin), []);
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Drawer anchor="left" open={state.open} onClose={toggleDrawer(false)}>
-            {list}
-          </Drawer>
-          <Tooltip title="回首頁">
-            <Typography
-              variant="h5"
-              className={classes.title}
-              component="span"
-              onClick={() => {
-                history.push("/");
-              }}
+    <AppShell.Header bg="indigo" pos="relative">
+      <Flex justify="space-between" align="center" h="100%">
+        <Group px="sm" c="white">
+          <Burger opened={opened} color="white" onClick={toggle} size="sm" />
+          <Tooltip label={i18n.t("header.homeTooltip")}>
+            <Title
+              order={3}
+              onClick={() => navigate("/")}
+              style={{ cursor: "pointer" }}
             >
-              Web Programming Butler
-            </Typography>
+              Demo Butler
+            </Title>
           </Tooltip>
-        </Toolbar>
-      </AppBar>
-    </div>
+        </Group>
+        <Flex direction="row" gap="xs" justify="center" align="center" px="sm">
+          <ThemeActionIcon />
+          <LanguageActionIcon />
+        </Flex>
+      </Flex>
+      <Drawer
+        opened={opened}
+        onClose={toggle}
+        size="15rem"
+        overlayProps={{ backgroundOpacity: 0.5, blur: 4 }}
+      >
+        <NavList hasLogin={hasLogin} />
+      </Drawer>
+    </AppShell.Header>
+  );
+}
+
+function NavList(props: { hasLogin: boolean }) {
+  const navigate = useNavigate();
+  const colorScheme = useComputedColorScheme();
+  const i18n = useTranslation();
+  return (
+    <Flex direction="column">
+      {entries.map((entry) => (
+        <Button
+          key={entry.nameKey}
+          w="100%"
+          justify="start"
+          color={colorScheme === "light" ? "dark" : "gray"}
+          variant="subtle"
+          size="md"
+          onClick={() => navigate(entry.path)}
+        >
+          <ThemeIcon
+            c={colorScheme === "light" ? "dark" : "gray"}
+            variant="transparent"
+          >
+            {entry.icon}
+          </ThemeIcon>
+          <Space w="sm" />
+          <Text>{i18n.t(entry.nameKey)}</Text>
+        </Button>
+      ))}
+      {props.hasLogin && (
+        <Button
+          key="logout"
+          w="100%"
+          justify="start"
+          color={colorScheme === "light" ? "red.8" : "orange.6"}
+          variant="subtle"
+          size="md"
+          onClick={() => {
+            FirebaseService.Instance.signOut().then(() => {
+              navigate("/");
+            });
+          }}
+        >
+          <ThemeIcon
+            c={colorScheme === "light" ? "red.8" : "orange.6"}
+            variant="transparent"
+          >
+            <IconLogout />
+          </ThemeIcon>
+          <Space w="sm" />
+          <Text>{i18n.t("header.nav.logout")}</Text>
+        </Button>
+      )}
+    </Flex>
+  );
+}
+
+function ThemeActionIcon() {
+  const { setColorScheme } = useMantineColorScheme();
+  const colorScheme = useComputedColorScheme();
+  const i18n = useTranslation();
+  return (
+    <Tooltip
+      label={
+        colorScheme === "light"
+          ? i18n.t("header.nav.darkMode")
+          : i18n.t("header.nav.lightMode")
+      }
+    >
+      <ActionIcon
+        variant="subtle"
+        radius="xl"
+        size="lg"
+        color="yellow"
+        onClick={() =>
+          setColorScheme(colorScheme === "light" ? "dark" : "light")
+        }
+      >
+        {colorScheme === "light" && <IconMoonStars />}
+        {colorScheme === "dark" && <IconSun />}
+      </ActionIcon>
+    </Tooltip>
+  );
+}
+
+function LanguageActionIcon() {
+  const colorScheme = useComputedColorScheme();
+  const { locale, setLocale } = useLocale();
+  const i18n = useTranslation();
+  return (
+    <Popover position="bottom" withArrow shadow="md">
+      <Popover.Target>
+        <Tooltip label={i18n.t("header.nav.changeLanguage")}>
+          <ActionIcon variant="subtle" radius="xl" size="lg" color="white">
+            <IconLanguage />
+          </ActionIcon>
+        </Tooltip>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Flex direction="column" justify="center" align="center">
+          {supportedLocales.map((l) => (
+            <Button
+              pl="xs"
+              pr="sm"
+              fullWidth
+              key={l}
+              variant="subtle"
+              color={colorScheme === "light" ? "dark" : "white"}
+              onClick={() => setLocale(l)}
+            >
+              <ThemeIcon
+                variant="transparent"
+                color={colorScheme === "light" ? "dark" : "white"}
+                opacity={locale === l ? 1 : 0}
+              >
+                <IconCheck />
+              </ThemeIcon>
+              <Space w="sm" />
+              {i18n.t("locale", {}, l)}
+            </Button>
+          ))}
+        </Flex>
+      </Popover.Dropdown>
+    </Popover>
   );
 }

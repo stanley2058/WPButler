@@ -1,38 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@mui/styles";
+import { Button, Select, Flex } from "@mantine/core";
 import FirebaseService from "../../services/FirebaseService";
-import { default as SeatRecordObject } from "../../entities/SeatRecord";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-} from "@mui/material";
 import SeatTableCreator from "../../services/SeatTableCreator";
-import { Download } from "@mui/icons-material";
+import type { SeatRecord as SeatRecordType } from "../../entities/SeatRecord";
+import { useTranslation } from "../../services/I18n";
 
-const useStyles = makeStyles(() => ({
-  inputs: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1em",
-  },
-}));
 export default function SeatRecord() {
-  const classes = useStyles();
-  const [records, setRecords] = useState<SeatRecordObject[]>([]);
+  const i18n = useTranslation();
+  const [records, setRecords] = useState<SeatRecordType[]>([]);
   const [selectedIndex, setSelectedIndex] = useState("");
 
   useEffect(() => {
-    const getData = async () => {
-      const records = await FirebaseService.Instance.getSeatRecordList();
-      const data = records.docs
-        .map((r) => r.data() as SeatRecordObject)
-        .sort((a, b) => b.classTime.toMillis() - a.classTime.toMillis());
-      setRecords(data);
-    };
-    getData();
+    FirebaseService.Instance.getSeatRecordList().then(setRecords);
   }, []);
 
   const download = () => {
@@ -45,7 +24,7 @@ export default function SeatRecord() {
     a.setAttribute("href", csv);
     a.setAttribute(
       "download",
-      `${record.classTime.toDate().toLocaleDateString()}.csv`
+      `${record.classTime.toDate().toISOString()}.csv`,
     );
     document.body.appendChild(a);
     a.click();
@@ -53,26 +32,28 @@ export default function SeatRecord() {
   };
 
   return (
-    <div className={classes.inputs}>
-      <FormControl fullWidth>
-        <InputLabel id="class-select-label">課程選擇</InputLabel>
-        <Select
-          labelId="class-select-label"
-          id="class-select"
-          value={selectedIndex}
-          label="課程選擇"
-          onChange={(e) => setSelectedIndex(e.target.value.toString())}
-        >
-          {records.map((r, index) => (
-            <MenuItem value={index.toString()} key={index}>
-              {r.classTime.toDate().toLocaleDateString()}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button variant="contained" onClick={() => download()}>
-        下載
+    <Flex direction="column" gap="1rem">
+      <Select
+        w="100%"
+        id="class-select"
+        label={i18n.t("management.class.selectClass")}
+        placeholder={i18n.t("management.class.selectClassTime")}
+        checkIconPosition="right"
+        value={selectedIndex}
+        onChange={(v) => {
+          if (v) setSelectedIndex(v);
+        }}
+        data={records.map((r, index) => ({
+          label: i18n.t("management.class.startAtFull", {
+            date: r.classTime.toDate().toLocaleDateString(i18n.t("localeCode")),
+            time: r.classTime.toDate().toLocaleTimeString(i18n.t("localeCode")),
+          }),
+          value: `${index}`,
+        }))}
+      />
+      <Button color="indigo" onClick={() => download()}>
+        {i18n.t("export.download")}
       </Button>
-    </div>
+    </Flex>
   );
 }

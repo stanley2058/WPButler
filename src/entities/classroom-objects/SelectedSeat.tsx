@@ -1,21 +1,26 @@
-import React from "react";
-import { Tooltip } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { PersonPin } from "@mui/icons-material";
+import React, { forwardRef } from "react";
+import { Tooltip, ThemeIcon, type DefaultMantineColor } from "@mantine/core";
+import { IconUserPin } from "@tabler/icons-react";
+import { useTranslation } from "../../services/I18n";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    cursor: "help",
-  },
-}));
 export default function SelectedSeat(props: { hasLogin?: boolean }) {
-  const classes = useStyles();
-  if (props.hasLogin) return <PersonPin color="primary" />;
+  const i18n = useTranslation();
+  if (props.hasLogin) return <PersonPin color="yellow" />;
   return (
-    <div className={classes.root}>
-      <Tooltip title="現在的座位">
-        <PersonPin color="primary" />
+    <span style={{ cursor: "help", display: "flex" }}>
+      <Tooltip label={i18n.t("entity.seat.selected")}>
+        <PersonPin color="indigo" />
       </Tooltip>
-    </div>
+    </span>
   );
 }
+
+const PersonPin = forwardRef<HTMLDivElement, { color: DefaultMantineColor }>(
+  ({ color }, ref) => {
+    return (
+      <ThemeIcon ref={ref} color={color} variant="light" radius="xl" size="md">
+        <IconUserPin />
+      </ThemeIcon>
+    );
+  },
+);

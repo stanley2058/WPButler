@@ -1,17 +1,12 @@
+import { Flex } from "@mantine/core";
 import React from "react";
-import { makeStyles } from "@mui/styles";
+import { useTranslation } from "../../services/I18n";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    backgroundColor: "lightgray",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    placeItems: "center",
-  },
-}));
 export default function WhiteBoard() {
-  const classes = useStyles();
-  return <div className={classes.root}>白板</div>;
+  const i18n = useTranslation();
+  return (
+    <Flex justify="center" align="center" w="100%" h="100%" bg="gray">
+      {i18n.t("entity.seat.whiteboard")}
+    </Flex>
+  );
 }

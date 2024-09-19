@@ -1,102 +1,80 @@
-import React, { SyntheticEvent } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import React, { type FormEvent, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, Input, Card, Title, Flex } from "@mantine/core";
 import FirebaseService from "../services/FirebaseService";
-import { useHistory } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Swal } from "../services/SweatAlert";
+import { getTranslation, useTranslation } from "../services/I18n";
 
-const useStyles = makeStyles({
-  root: {
-    display: "flex",
-    justifyContent: "center",
-    placeItems: "center",
-    top: "3em",
-    position: "relative",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    marginTop: "1em",
-  },
-  actions: {
-    marginTop: "1em",
-    display: "flex",
-    justifyContent: "center",
-    placeItems: "center",
-  },
-});
+function fireError() {
+  const i18n = getTranslation();
+  return Swal.fire({
+    icon: "error",
+    title: i18n.t("login.loginFailed"),
+    text: i18n.t("login.loginFailedDesc"),
+  });
+}
+
 export default function Login() {
-  const history = useHistory();
+  const i18n = useTranslation();
+  const navigate = useNavigate();
   (async () => {
-    if (await FirebaseService.Instance.hasLogin) history.push("/settings");
+    if (await FirebaseService.Instance.hasLogin) navigate("/settings");
   })();
-  const classes = useStyles();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  const login = async (event: SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const target = event.target as typeof event.target & {
-      email: { value: string };
-      password: { value: string };
-    };
+  const login = (e: FormEvent<HTMLDivElement>) => {
+    e.preventDefault();
 
-    const fireError = async () => {
-      await Swal.fire({
-        icon: "error",
-        title: "登入失敗",
-        text: "帳號或密碼錯誤",
-      });
-    };
-    try {
-      const res = await FirebaseService.Instance.signIn(
-        target.email.value,
-        target.password.value
-      );
-      if (res) history.push("/settings");
-      else await fireError();
-    } catch (error) {
-      // login failed
-      await fireError();
-    }
+    FirebaseService.Instance.signIn(
+      emailRef.current!.value,
+      passwordRef.current!.value,
+    )
+      .then((res) => {
+        if (!res) throw new Error("login failed");
+        navigate("/settings");
+      })
+      .catch(() => fireError());
   };
 
   return (
-    <div className={classes.root}>
-      <Card>
-        <CardContent>
-          <form className={classes.form} autoComplete="off" onSubmit={login}>
-            <Typography variant="h5" component="h2">
-              助教登入
-            </Typography>
-            <TextField
+    <Flex justify="center" align="center" pos="relative" top="3rem">
+      <Card shadow="sm" p="xl" radius="md" withBorder>
+        <Flex
+          component="form"
+          direction="column"
+          autoComplete="off"
+          onSubmit={(e) => login(e)}
+          gap="0.5rem"
+        >
+          <Title order={3}>{i18n.t("login.taLogin")}</Title>
+          <Input.Wrapper label={`${i18n.t("common.emailAddress")}*`}>
+            <Input
+              ref={emailRef}
               required
               variant="filled"
-              margin="dense"
-              label="信箱"
+              placeholder={i18n.t("common.emailAddress")}
               type="email"
               name="email"
             />
-            <TextField
+          </Input.Wrapper>
+          <Input.Wrapper label={`${i18n.t("login.password")}*`}>
+            <Input
+              ref={passwordRef}
               required
               variant="filled"
-              margin="dense"
-              label="密碼"
+              placeholder={i18n.t("login.password")}
               type="password"
               name="password"
             />
-            <div className={classes.actions}>
-              <Button variant="contained" color="primary" type="submit">
-                登入
-              </Button>
-            </div>
-          </form>
-        </CardContent>
+          </Input.Wrapper>
+          <Flex justify="center" align="center" mt="1rem">
+            <Button color="indigo" type="submit">
+              {i18n.t("login.login")}
+            </Button>
+          </Flex>
+        </Flex>
       </Card>
-    </div>
+    </Flex>
   );
 }

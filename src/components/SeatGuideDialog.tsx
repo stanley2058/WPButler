@@ -1,35 +1,14 @@
-import React, { useState, ChangeEvent } from "react";
-import {
-  Button,
-  ButtonGroup,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  List,
-  ListItem,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import Swal from "sweetalert2";
+import React, { useState, type ChangeEvent } from "react";
+import { Flex, Modal, Text, Input, Button } from "@mantine/core";
+import { Swal } from "../services/SweatAlert";
 import ClassroomUtils from "../services/ClassroomUtils";
-
-const useStyles = makeStyles(() => ({
-  rotationActions: {
-    display: "flex",
-    flexDirection: "column",
-    placeItems: "center",
-    justifyContent: "center",
-    wordBreak: "break-word",
-  },
-}));
+import { useTranslation } from "../services/I18n";
 
 export default function SeatGuideDialog(props: {
   open: boolean;
   onClose: (id: string, rotation: number) => void;
 }) {
-  const classes = useStyles();
+  const i18n = useTranslation();
   const [state, setState] = useState<{
     isLeft?: boolean;
     isOpen: boolean;
@@ -54,8 +33,8 @@ export default function SeatGuideDialog(props: {
     setState({ ...state, isOpen: false });
     await Swal.fire({
       icon: "info",
-      title: "選擇座位",
-      text: "點選教室平面圖上面的座位來設定目前的位子。",
+      title: i18n.t("classroom.guide.chooseSeatTitle"),
+      text: i18n.t("classroom.guide.chooseSeatDescription"),
     });
     props.onClose(state.id, state.isLeft ? 0 : 2);
   };
@@ -67,12 +46,12 @@ export default function SeatGuideDialog(props: {
     });
   };
   const getVariant = (isLeft: boolean) => {
-    if (state.isLeft === isLeft) return "contained";
-    return "outlined";
+    if (state.isLeft === isLeft) return "filled";
+    return "outline";
   };
   const getColor = (isLeft: boolean) => {
-    if (state.isLeft === isLeft) return "primary";
-    return "inherit";
+    if (state.isLeft === isLeft) return undefined;
+    return "blue";
   };
   const onIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const id = event.target.value.trim();
@@ -80,54 +59,55 @@ export default function SeatGuideDialog(props: {
   };
 
   return (
-    <Dialog open={state.isOpen} onClose={onClose}>
-      <DialogTitle>快速設定</DialogTitle>
-      <DialogContent>
-        <List>
-          <ListItem>
-            <TextField
-              fullWidth
-              variant="outlined"
-              required
-              label="學號"
-              onChange={onIdChange}
-            />
-          </ListItem>
-          <ListItem className={classes.rotationActions}>
-            <Typography>電腦在我的前面的話，老師坐在我的...？</Typography>
-            <ButtonGroup fullWidth>
-              <Button
-                variant={getVariant(true)}
-                color={getColor(true)}
-                onClick={() => {
-                  chooseTeacherPosition(true);
-                }}
-              >
-                左邊
-              </Button>
-              <Button
-                variant={getVariant(false)}
-                color={getColor(false)}
-                onClick={() => {
-                  chooseTeacherPosition(false);
-                }}
-              >
-                右邊
-              </Button>
-            </ButtonGroup>
-          </ListItem>
-        </List>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          disabled={!state.canComplete}
-          variant="contained"
-          color="primary"
-          onClick={onClose}
-        >
-          完成
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <Modal
+      opened={state.isOpen}
+      onClose={onClose}
+      title={i18n.t("classroom.guide.quickSetting.title")}
+      withCloseButton={false}
+      centered
+    >
+      <Flex direction="column" gap="1rem">
+        <Input
+          w="100%"
+          required
+          placeholder={i18n.t("classroom.studentNumberRaw")}
+          onChange={onIdChange}
+        />
+        <Text ta="center">
+          {i18n.t("classroom.guide.quickSetting.mainQuestion")}
+        </Text>
+        <Button.Group w="100%">
+          <Button
+            w="50%"
+            variant={getVariant(true)}
+            color={getColor(true)}
+            onClick={() => {
+              chooseTeacherPosition(true);
+            }}
+          >
+            {i18n.t("classroom.guide.quickSetting.left")}
+          </Button>
+          <Button
+            w="50%"
+            variant={getVariant(false)}
+            color={getColor(false)}
+            onClick={() => {
+              chooseTeacherPosition(false);
+            }}
+          >
+            {i18n.t("classroom.guide.quickSetting.right")}
+          </Button>
+        </Button.Group>
+        <Flex justify="center">
+          <Button
+            disabled={!state.canComplete}
+            color="indigo"
+            onClick={onClose}
+          >
+            {i18n.t("common.done")}
+          </Button>
+        </Flex>
+      </Flex>
+    </Modal>
   );
 }

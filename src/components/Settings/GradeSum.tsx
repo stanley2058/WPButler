@@ -1,31 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@mui/styles";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import ClassTime from "../../entities/ClassTime";
+import { Flex, Select, Text } from "@mantine/core";
+import type ClassTime from "../../entities/ClassTime";
 import FirebaseService from "../../services/FirebaseService";
-import { ClassroomQueue } from "../../entities/ClassroomQueue";
+import { useTranslation } from "../../services/I18n";
 
-const useStyles = makeStyles(() => ({
-  inputs: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1em",
-  },
-  table: {
-    display: "flex",
-    flexDirection: "row",
-    gap: "1em",
-    fontFamily: "monospace",
-    fontSize: "1.15em",
-    textAlign: "left",
-  },
-  id: {
-    width: "8em",
-  },
-}));
 export default function GradeSum() {
-  const classes = useStyles();
-
+  const i18n = useTranslation();
   const [classTimeList, setClassTimeList] = useState<
     { time: ClassTime; id: string }[]
   >([]);
@@ -36,32 +16,25 @@ export default function GradeSum() {
 
   const getTime = async () => {
     const classTimeDocs = await FirebaseService.Instance.getAllClassTime();
-    if (classTimeDocs.empty) return;
-    setClassTimeList(
-      classTimeDocs.docs
-        .filter(
-          (doc) => (doc.data() as ClassTime).start.toMillis() < Date.now()
-        )
-        .map((doc) => ({ time: doc.data() as ClassTime, id: doc.id }))
-        .sort((a, b) => b.time.start.toMillis() - a.time.start.toMillis())
-    );
+    if (!classTimeDocs) return;
+    setClassTimeList(classTimeDocs);
   };
   const getClassroom = async () => {
     if (!classId) return;
-    const res = await FirebaseService.Instance.getClassroomQueueById(classId);
+    const data = await FirebaseService.Instance.getClassroomQueueById(classId);
     const maxPoints =
       classTimeList.find((c) => c.id === classId)?.time.maxPoints || 0;
     const map: { [id: string]: number } = {};
-    (res.data() as ClassroomQueue).resolved.forEach((record) => {
+    data.resolved.forEach((record) => {
       if (!map[record.id]) map[record.id] = 0;
-      map[record.id] += record.points;
-      if (map[record.id] > maxPoints) map[record.id] = maxPoints;
+      map[record.id]! += record.points;
+      if (map[record.id]! > maxPoints) map[record.id] = maxPoints;
     });
     setStudentRecords(
       Object.keys(map)
-        .map((k) => ({ id: k, points: map[k] }))
+        .map((k) => ({ id: k, points: map[k]! }))
         .filter((r) => r.points > 0)
-        .sort((a, b) => a.id.localeCompare(b.id))
+        .sort((a, b) => a.id.localeCompare(b.id)),
     );
   };
 
@@ -73,41 +46,57 @@ export default function GradeSum() {
   }, [classId]);
 
   return (
-    <div className={classes.inputs}>
-      <FormControl fullWidth>
-        <InputLabel id="class-select-label">課程選擇</InputLabel>
-        <Select
-          labelId="class-select-label"
-          id="class-select"
-          value={classId}
-          label="課程選擇"
-          onChange={(e) => setClassId(e.target.value)}
-        >
-          {classTimeList.map((classTime) => (
-            <MenuItem value={classTime.id} key={classTime.id}>
-              {classTime.time.start.toDate().toLocaleDateString()}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <div className={classes.table}>
+    <Flex direction="column" gap="1rem">
+      <Select
+        placeholder={i18n.t("management.class.selectClassTime")}
+        checkIconPosition="right"
+        w="100%"
+        label={i18n.t("management.class.selectClass")}
+        id="class-select"
+        value={classId}
+        onChange={(v) => {
+          if (v) setClassId(v);
+        }}
+        data={classTimeList.map((classTime) => ({
+          label: i18n.t("management.class.startAtFull", {
+            date: classTime.time.start
+              .toDate()
+              .toLocaleDateString(i18n.t("localeCode")),
+            time: classTime.time.start
+              .toDate()
+              .toLocaleTimeString(i18n.t("localeCode")),
+          }),
+          value: classTime.id,
+        }))}
+      />
+      <Flex direction="row" gap="1rem" ta="left">
         <table>
           <thead>
             <tr>
-              <th className={classes.id}>學號</th>
-              <th>題數</th>
+              <th>
+                <Text fw="bold" w="8rem">
+                  {i18n.t("classroom.studentNumberRaw")}
+                </Text>
+              </th>
+              <th>
+                <Text fw="bold">{i18n.t("management.class.points")}</Text>
+              </th>
             </tr>
           </thead>
           <tbody>
             {studentRecords.map((record) => (
               <tr key={record.id}>
-                <td>{record.id}</td>
-                <td>{record.points}</td>
+                <td>
+                  <Text ff="monospace">{record.id}</Text>
+                </td>
+                <td>
+                  <Text ff="monospace">{record.points}</Text>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 }

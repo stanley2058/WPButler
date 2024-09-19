@@ -1,80 +1,75 @@
 import React from "react";
-import { createStyles, makeStyles } from "@mui/styles";
-import {
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  ButtonGroup,
-} from "@mui/material";
-import { School, Class, Info } from "@mui/icons-material";
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      display: "flex",
-      justifyContent: "center",
-      placeItems: "center",
-      height: "100%",
-    },
-    rootGrid: {
-      position: "relative",
-      top: "6em",
-      display: "flex",
-      flexDirection: "row",
-      placeItems: "center",
-      justifyContent: "center",
-      maxWidth: "60em",
-    },
-    card: {
-      padding: "1em",
-      textAlign: "center",
-    },
-  })
-);
+import { useNavigate } from "react-router-dom";
+import { Card, Button, Space, Title, Flex } from "@mantine/core";
+import { IconBook2, IconInfoCircle, IconSchool } from "@tabler/icons-react";
+import { useTranslation } from "../services/I18n";
 
 export default function Home() {
-  const classes = useStyles();
-
+  const navigate = useNavigate();
+  const i18n = useTranslation();
   return (
-    <div className={classes.root}>
-      <Grid className={classes.rootGrid} container>
-        <Grid item sm={8} xs={11}>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography variant="h4" component="h2">
-                網頁程式設計助教系統
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <ButtonGroup
-                orientation="vertical"
-                color="primary"
-                aria-label="navigation buttons"
-                variant="text"
-                fullWidth
-              >
-                <Button
-                  href="https://tronclass.ntou.edu.tw/"
-                  size="small"
-                  target="_blank"
-                  startIcon={<School />}
-                >
-                  Tronclass
-                </Button>
-                <Button href="/classroom" size="small" startIcon={<Class />}>
-                  前往教室
-                </Button>
-                <Button href="/about" size="small" startIcon={<Info />}>
-                  關於本站
-                </Button>
-              </ButtonGroup>
-            </CardActions>
-          </Card>
-        </Grid>
-      </Grid>
-    </div>
+    <Flex justify="center" align="center">
+      <Flex
+        pos="relative"
+        top="6rem"
+        justify="center"
+        align="center"
+        maw="60rem"
+      >
+        <Card shadow="sm" p="xl" radius="md" withBorder>
+          <Card.Section mx="xl">
+            <Title order={2} ta="center">
+              {i18n.t("home.title")}
+            </Title>
+          </Card.Section>
+          <Space h="md" />
+          <Button.Group
+            orientation="vertical"
+            aria-label="navigation buttons"
+            variant="text"
+          >
+            <Button
+              component="a"
+              href="https://tronclass.ntou.edu.tw/"
+              size="sm"
+              target="_blank"
+              leftSection={<IconSchool />}
+              fullWidth
+              variant="subtle"
+            >
+              {i18n.t("home.tronclass")}
+            </Button>
+            <Button
+              component="a"
+              href="/classroom"
+              size="sm"
+              leftSection={<IconBook2 />}
+              variant="subtle"
+              fullWidth
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/classroom");
+              }}
+            >
+              {i18n.t("home.classroom")}
+            </Button>
+            <Button
+              component="a"
+              href="/about"
+              size="sm"
+              leftSection={<IconInfoCircle />}
+              variant="subtle"
+              fullWidth
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/about");
+              }}
+            >
+              {i18n.t("home.about")}
+            </Button>
+          </Button.Group>
+        </Card>
+      </Flex>
+    </Flex>
   );
 }
