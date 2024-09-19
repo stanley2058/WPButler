@@ -23,7 +23,7 @@ export default function Seat(props: {
       onClick={() => {
         SeatSelectionService.Instance.emitSelection(props.row, props.col);
       }}
-      style={{ cursor: "pointer" }}
+      style={{ cursor: "pointer", display: "flex", height: "fit-content" }}
     >
       <Tooltip label={tooltipText}>
         <ChairIcon color={displayColor} />
@@ -35,7 +35,7 @@ export default function Seat(props: {
 const ChairIcon = forwardRef<HTMLDivElement, { color: string }>(
   ({ color }, ref) => {
     return (
-      <ThemeIcon ref={ref} color={color} variant="transparent" size="sm">
+      <ThemeIcon ref={ref} color={color} variant="transparent" size="md">
         <IconArmchair />
       </ThemeIcon>
     );

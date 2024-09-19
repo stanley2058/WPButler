@@ -4,8 +4,8 @@ import { IconArmchair } from "@tabler/icons-react";
 
 export default function Space() {
   return (
-    <div>
-      <ThemeIcon color="transparent" variant="transparent" size="sm">
+    <div style={{ display: "flex" }}>
+      <ThemeIcon color="transparent" variant="transparent" size="md">
         <IconArmchair />
       </ThemeIcon>
     </div>

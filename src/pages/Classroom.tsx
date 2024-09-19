@@ -219,7 +219,8 @@ export default function Classroom() {
       )}
       <Flex
         direction="column"
-        style={{ maxWidth: "min(30rem, 100%)", width: "100%" }}
+        mx="auto"
+        style={{ maxWidth: "min(100%, 40rem)", width: "auto", flexGrow: "1" }}
       >
         <ClassroomAction
           queue={state.waiting.queue}

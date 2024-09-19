@@ -7,7 +7,7 @@ export default function SelectedSeat(props: { hasLogin?: boolean }) {
   const i18n = useTranslation();
   if (props.hasLogin) return <PersonPin color="indigo" />;
   return (
-    <span style={{ cursor: "help" }}>
+    <span style={{ cursor: "help", display: "flex" }}>
       <Tooltip label={i18n.t("entity.seat.selected")}>
         <PersonPin color="indigo" />
       </Tooltip>
@@ -18,7 +18,7 @@ export default function SelectedSeat(props: { hasLogin?: boolean }) {
 const PersonPin = forwardRef<HTMLDivElement, { color: string }>(
   ({ color }, ref) => {
     return (
-      <ThemeIcon ref={ref} color={color} variant="transparent" size="sm">
+      <ThemeIcon ref={ref} color={color} variant="light" radius="xl" size="md">
         <IconUserPin />
       </ThemeIcon>
     );
