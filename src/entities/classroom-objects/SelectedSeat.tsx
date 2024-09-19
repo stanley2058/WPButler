@@ -1,11 +1,11 @@
 import React, { forwardRef } from "react";
-import { Tooltip, ThemeIcon } from "@mantine/core";
+import { Tooltip, ThemeIcon, type DefaultMantineColor } from "@mantine/core";
 import { IconUserPin } from "@tabler/icons-react";
 import { useTranslation } from "../../services/I18n";
 
 export default function SelectedSeat(props: { hasLogin?: boolean }) {
   const i18n = useTranslation();
-  if (props.hasLogin) return <PersonPin color="indigo" />;
+  if (props.hasLogin) return <PersonPin color="yellow" />;
   return (
     <span style={{ cursor: "help", display: "flex" }}>
       <Tooltip label={i18n.t("entity.seat.selected")}>
@@ -15,7 +15,7 @@ export default function SelectedSeat(props: { hasLogin?: boolean }) {
   );
 }
 
-const PersonPin = forwardRef<HTMLDivElement, { color: string }>(
+const PersonPin = forwardRef<HTMLDivElement, { color: DefaultMantineColor }>(
   ({ color }, ref) => {
     return (
       <ThemeIcon ref={ref} color={color} variant="light" radius="xl" size="md">
