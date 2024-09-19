@@ -4,7 +4,9 @@
 
 ## Demo
 
-[DEMO](./demo.webm)
+https://github.com/user-attachments/assets/c59f5073-fe83-4155-a099-ecd864026f6b
+
+([DEMO File](./demo.webm))
 
 In the demo showed the following features:
 

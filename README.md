@@ -6,7 +6,7 @@
 
 ## Features
 
-![Home image](./docs/home.webp)
+![Main image](./docs/main.png)
 
 See [Features.md](./docs/Features.md) for detail.
 
