@@ -2,6 +2,8 @@
 
 > Demo Butler is a project developed for the web programming class.
 
+> This is the V2 branch for Demo Butler. For legacy V1, see: [V1 branch](https://github.com/stanley2058/WPButler/tree/ref/v1) or [V1.0.0](https://github.com/stanley2058/WPButler/tree/v1.0.0).
+
 ## Features
 
 ![Home image](./docs/home.webp)
